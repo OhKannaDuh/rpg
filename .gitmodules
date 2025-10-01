@@ -1,0 +1,3 @@
+[submodule "external/ldtk_rust"]
+	path = external/ldtk_rust
+	url = https://github.com/OhKannaDuh/ldtk_rust.git
