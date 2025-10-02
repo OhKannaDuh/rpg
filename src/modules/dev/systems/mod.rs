@@ -63,17 +63,27 @@ fn move_camera(
         let half_h = (ortho.area.max.y - ortho.area.min.y) * 0.5;
 
         let size = level.size.pixels().as_vec2();
+        let origin = level.transform.bottom_left_bevy().as_vec2();
+
+        let min = origin;
+        let max = origin + size;
 
         if size.x <= half_w * 2.0 {
-            transform.translation.x = size.x * 0.5;
+            transform.translation.x = origin.x + size.x * 0.5;
         } else {
-            transform.translation.x = transform.translation.x.clamp(half_w, size.x - half_w);
+            transform.translation.x = transform
+                .translation
+                .x
+                .clamp(min.x + half_w, max.x - half_w);
         }
 
         if size.y <= half_h * 2.0 {
-            transform.translation.y = size.y * 0.5;
+            transform.translation.y = origin.y + size.y * 0.5;
         } else {
-            transform.translation.y = transform.translation.y.clamp(half_h, size.y - half_h);
+            transform.translation.y = transform
+                .translation
+                .y
+                .clamp(min.y + half_h, max.y - half_h);
         }
     }
 }
@@ -85,38 +95,29 @@ fn skip_main_menu(mut app_state: ResMut<NextState<AppState>>) {
 }
 
 #[add_system(schedule = Update, plugin = DevPlugin, run_if = in_state(GameState::Playing))]
-fn render_baked_collision(
-    world_query: Query<&RpgWorld>,
-    nav_query: Query<&Nav>,
-    mut gizmos: Gizmos,
-) {
-    let Ok(world) = world_query.single() else {
-        return;
-    };
+fn handle_debug_input(mut state: ResMut<DebugState>, keyboard: Res<ButtonInput<KeyCode>>) {
+    if keyboard.just_pressed(KeyCode::F1) {
+        state.show_collision = !state.show_collision;
+        info!("Toggled collision rendering: {}", state.show_collision);
+    }
+}
 
-    let Some(level) = world.get_active_level() else {
+#[add_system(schedule = Update, plugin = DevPlugin, run_if = in_state(GameState::Playing))]
+fn render_baked_collision(nav_query: Query<&Nav>, mut gizmos: Gizmos, state: Res<DebugState>) {
+    if !state.show_collision {
         return;
-    };
-
-    const TILE: f32 = 16.0;
-    const MAP_ORIGIN: Vec2 = Vec2::new(0.0, 0.0);
+    }
 
     let color = Color::srgba(1.0, 0.1, 0.1, 0.65);
 
     for nav in nav_query.iter() {
         if let Some(baked) = &nav.baked_collision {
-            for r in baked {
-                let size = Vec2::new(r.width as f32 * TILE, r.height as f32 * TILE);
+            for rect in baked {
+                let position = rect.position.as_vec2();
+                let size = rect.size.pixels().as_vec2();
 
-                let center = Vec2::new(
-                    (r.x as f32 + r.width as f32 * 0.5) * TILE,
-                    (r.y as f32 + r.height as f32 * 0.5) * TILE,
-                ) + MAP_ORIGIN;
-
-                let isometry = Isometry2d {
-                    rotation: Rot2::default(),
-                    translation: center,
-                };
+                let center = Vec2::new(position.x + size.x * 0.5, position.y + size.y * 0.5);
+                let isometry = Isometry2d::from_translation(center);
 
                 gizmos.rect_2d(isometry, size, color);
             }

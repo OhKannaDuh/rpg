@@ -1,7 +1,5 @@
 use ldtk_rust::{EntityDefinition, EntityInstance};
 
-use crate::data::LdtkPosition;
-
 #[derive(Clone)]
 pub enum EntityFieldType {
     EntityRef,
@@ -47,7 +45,7 @@ pub struct LdtkEntity {
     pub level_iid: String,
     pub layer_iid: String,
     pub def: EntityDef,
-    pub ldtk_tile_position: LdtkPosition,
+    // pub ldtk_tile_position: LdtkPosition,
 }
 
 impl LdtkEntity {
@@ -62,7 +60,7 @@ impl LdtkEntity {
             level_iid,
             layer_iid,
             def,
-            ldtk_tile_position: LdtkPosition::from_entity_instance(instance),
+            // ldtk_tile_position: LdtkPosition::from_entity_instance(instance),
         }
     }
 }

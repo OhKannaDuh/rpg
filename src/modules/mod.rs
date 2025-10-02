@@ -1,1 +1,3 @@
-use_mod!(world, dev);
+use_mod!(world, actor, player);
+
+use_mod!(dev);

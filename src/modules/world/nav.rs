@@ -1,3 +1,5 @@
+use bevy::math::I64Vec2;
+
 use crate::data::Rect;
 
 use super::*;
@@ -50,7 +52,7 @@ impl Nav {
         Some(self.flags[self.index(x, y)])
     }
 
-    pub fn set_flag(&mut self, pos: BevyPosition, flag: NavFlag) {
+    pub fn set_flag(&mut self, pos: I64Vec2, flag: NavFlag) {
         if pos.x as usize >= self.width || pos.y as usize >= self.height {
             return;
         }
@@ -58,7 +60,7 @@ impl Nav {
         self.flags[index] = flag;
     }
 
-    pub fn bake_collision(&mut self) {
+    pub fn bake_collision(&mut self, level: &Level) {
         if self.baked_collision.is_some() {
             return;
         }
@@ -76,7 +78,6 @@ impl Nav {
                     continue;
                 }
 
-                // 1)  width on this row
                 let mut max_w = 0usize;
                 while x + max_w < w && !visited[y * w + (x + max_w)] && self.is_solid(x + max_w, y)
                 {
@@ -104,12 +105,15 @@ impl Nav {
                     }
                 }
 
-                rects.push(Rect {
-                    x: x as i64,
-                    y: y as i64,
-                    width: max_w as i64,
-                    height: max_h as i64,
-                });
+                let level_transform = level.transform.bottom_left_bevy();
+                let position = I64Vec2::new(
+                    (x as i64) * level.grid.grid_size + level_transform.x,
+                    (y as i64) * level.grid.grid_size + level_transform.y,
+                );
+
+                let size = Size::new(max_w as i64, max_h as i64, level.grid.grid_size);
+
+                rects.push(Rect { position, size });
             }
         }
 

@@ -1,6 +1,8 @@
+use bevy::math::I64Vec2;
+
+use crate::data::{Size, WorldPosition};
+
 pub struct Rect {
-    pub x: i64,
-    pub y: i64,
-    pub width: i64,
-    pub height: i64,
+    pub position: I64Vec2,
+    pub size: Size,
 }

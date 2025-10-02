@@ -58,6 +58,8 @@ fn transition(
         );
     };
 
+    let world_pos = level.transform.bottom_left_bevy().as_vec2();
+
     let mut nav: Nav = Nav::new(level);
 
     // Load tile layers
@@ -101,7 +103,7 @@ fn transition(
             storage,
             map_type: TilemapType::default(),
             anchor: TilemapAnchor::BottomLeft,
-            transform: Transform::from_xyz(0.0, 0.0, layer.def.z as f32),
+            transform: Transform::from_xyz(world_pos.x, world_pos.y, layer.def.z as f32),
             ..Default::default()
         });
     }
@@ -147,7 +149,7 @@ fn transition(
             storage,
             map_type: TilemapType::default(),
             anchor: TilemapAnchor::BottomLeft,
-            transform: Transform::from_xyz(0.0, 0.0, layer.def.z as f32),
+            transform: Transform::from_xyz(world_pos.x, world_pos.y, layer.def.z as f32),
             ..Default::default()
         });
     }
@@ -197,7 +199,7 @@ fn transition(
             storage,
             map_type: TilemapType::default(),
             anchor: TilemapAnchor::BottomLeft,
-            transform: Transform::from_xyz(0.0, 0.0, layer.def.z as f32),
+            transform: Transform::from_xyz(world_pos.x, world_pos.y, layer.def.z as f32),
             ..Default::default()
         });
     }
@@ -217,7 +219,7 @@ fn transition(
                     return;
                 };
 
-                let pos = level.size.get_bevy_position_of_index(i as u32, level);
+                let pos = level.grid.get_bevy_position(i as i64);
                 nav.set_flag(pos, flag);
             });
     }
@@ -237,12 +239,12 @@ fn transition(
                     return;
                 }
 
-                let pos = level.size.get_bevy_position_of_index(i as u32, level);
+                let pos = level.grid.get_bevy_position(i as i64);
                 nav.set_flag(pos, NavFlag::Blocked);
             });
     }
 
-    nav.bake_collision();
+    nav.bake_collision(level);
     commands.spawn((nav, ChildOf(entity)));
 
     // Load entities

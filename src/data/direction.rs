@@ -1,4 +1,6 @@
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+use bevy::reflect::Reflect;
+
+#[derive(Debug, Reflect, Clone, PartialEq, Eq, Hash)]
 pub enum Direction {
     North,
     East,

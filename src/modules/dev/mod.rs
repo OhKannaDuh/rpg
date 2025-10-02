@@ -2,6 +2,12 @@ use crate::prelude::*;
 
 mod systems;
 
-#[add_plugin(to_group = CorePlugins)]
+#[derive(Resource, Clone, Copy, PartialEq, Eq, Hash, Default)]
+#[insert_resource(plugin = DevPlugin)]
+pub struct DebugState {
+    pub show_collision: bool,
+}
+
+#[add_plugin(to_group = DevPlugins)]
 #[butler_plugin]
 pub struct DevPlugin;

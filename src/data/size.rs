@@ -1,18 +1,14 @@
-use crate::{
-    data::{BevyPosition, LdtkPosition},
-    modules::Level,
-};
-use bevy::math::UVec2;
+use bevy::math::I64Vec2;
 use bevy_ecs_tilemap::map::TilemapSize;
 
 pub struct Size {
-    width_in_tiles: u32,
-    height_in_tiles: u32,
-    grid_size: u32,
+    width_in_tiles: i64,
+    height_in_tiles: i64,
+    grid_size: i64,
 }
 
 impl Size {
-    pub fn new(width_in_tiles: u32, height_in_tiles: u32, grid_size: u32) -> Self {
+    pub fn new(width_in_tiles: i64, height_in_tiles: i64, grid_size: i64) -> Self {
         Self {
             width_in_tiles,
             height_in_tiles,
@@ -20,12 +16,20 @@ impl Size {
         }
     }
 
-    pub fn tiles(&self) -> UVec2 {
-        UVec2::new(self.width_in_tiles, self.height_in_tiles)
+    pub fn from_pixel_size(pixel_width: i64, pixel_height: i64, grid_size: i64) -> Self {
+        Self {
+            width_in_tiles: pixel_width / grid_size,
+            height_in_tiles: pixel_height / grid_size,
+            grid_size,
+        }
     }
 
-    pub fn pixels(&self) -> UVec2 {
-        UVec2::new(
+    pub fn tiles(&self) -> I64Vec2 {
+        I64Vec2::new(self.width_in_tiles, self.height_in_tiles)
+    }
+
+    pub fn pixels(&self) -> I64Vec2 {
+        I64Vec2::new(
             self.width_in_tiles * self.grid_size,
             self.height_in_tiles * self.grid_size,
         )
@@ -33,20 +37,8 @@ impl Size {
 
     pub fn get_tilemap_size(&self) -> TilemapSize {
         TilemapSize {
-            x: self.width_in_tiles,
-            y: self.height_in_tiles,
+            x: self.width_in_tiles as u32,
+            y: self.height_in_tiles as u32,
         }
-    }
-
-    pub fn get_ldtk_position_of_index(&self, index: u32) -> LdtkPosition {
-        LdtkPosition::new(
-            (index % self.width_in_tiles) as i64,
-            (index / self.width_in_tiles) as i64,
-        )
-    }
-
-    pub fn get_bevy_position_of_index(&self, index: u32, level: &Level) -> BevyPosition {
-        let ldtk_pos = self.get_ldtk_position_of_index(index);
-        ldtk_pos.to_bevy_position(level)
     }
 }

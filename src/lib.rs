@@ -5,6 +5,9 @@ use crate::prelude::*;
 mod macros;
 
 pub mod data;
+
+mod components;
+mod entities;
 mod modules;
 
 pub struct Core;
