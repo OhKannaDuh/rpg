@@ -1,21 +1,19 @@
-use bevy::{math::Vec2, reflect::Reflect};
-
-#[derive(Clone, Copy, Reflect, Debug, PartialEq, Eq, Hash, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Direction {
-    Up,
-    #[default]
-    Down,
-    Left,
-    Right,
+    North,
+    East,
+    South,
+    West,
 }
 
 impl Direction {
-    pub fn to_vec2(self) -> Vec2 {
-        match self {
-            Direction::Up => Vec2::Y,
-            Direction::Down => -Vec2::Y,
-            Direction::Left => -Vec2::X,
-            Direction::Right => Vec2::X,
+    pub fn from_ldtk_neighbor(neighbor: String) -> Option<Self> {
+        match neighbor.as_str() {
+            "n" => Some(Direction::North),
+            "e" => Some(Direction::East),
+            "s" => Some(Direction::South),
+            "w" => Some(Direction::West),
+            _ => None,
         }
     }
 }

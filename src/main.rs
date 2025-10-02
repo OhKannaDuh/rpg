@@ -1,6 +1,6 @@
 use bevy::{prelude::*, window::WindowMode};
-use bevy_asset_loader::prelude::*;
-use rpg::data::state::rpg_state::RpgState;
+use bevy_asset_loader::loading_state::{LoadingState, LoadingStateAppExt};
+use rpg::data::*;
 
 fn main() {
     App::new()
@@ -17,9 +17,13 @@ fn main() {
                 })
                 .set(ImagePlugin::default_nearest()),
         )
-        .init_state::<RpgState>()
+        .init_state::<AppState>()
+        .add_sub_state::<AppLoadingState>()
+        .add_sub_state::<GameState>()
+        .add_sub_state::<LevelTransitionState>()
         .add_loading_state(
-            LoadingState::new(RpgState::Loading).continue_to_state(RpgState::AssetsLoaded),
+            LoadingState::new(AppLoadingState::LoadingAssets)
+                .continue_to_state(AppLoadingState::ProcessingWorldFile),
         )
         .add_plugins(rpg::Core)
         .run();
