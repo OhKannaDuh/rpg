@@ -1,35 +1,31 @@
 use crate::prelude::*;
+use bevy::math::I64Vec2;
 
 #[derive(Component, Reflect, Debug, Default)]
 #[reflect(Component)]
-pub struct MoveIntent(pub Option<Direction>);
+pub struct FaceDirection(pub Direction);
 
-impl MoveIntent {
-    pub fn is_valid(&self) -> bool {
-        self.0.is_some()
-    }
-
-    pub fn stop(&mut self) {
-        self.0 = None;
-    }
-}
-
-#[derive(Component, Clone, Copy, Reflect, Debug, Default)]
+#[derive(Component, Reflect, Debug, Default)]
 #[reflect(Component)]
-pub struct MovementState {
-    pub from: IVec2,
-    pub to: IVec2,
-    pub progress: f32,
-    pub speed_cells_per_sec: f32,
+pub struct GridPosition {
+    pub world_cell: Option<I64Vec2>,
+    pub local_cell: Option<I64Vec2>,
+    pub level_iid: Option<String>,
 }
 
-impl MovementState {
-    pub fn new(from: IVec2, to: IVec2, speed_cells_per_sec: f32) -> Self {
-        Self {
-            from,
-            to,
-            progress: 0.0,
-            speed_cells_per_sec,
-        }
-    }
+#[derive(Component, Reflect, Debug, Default)]
+#[reflect(Component)]
+#[require(GridPosition, FaceDirection)]
+pub struct GridMover {
+    pub grid_size: i64,
+    pub seconds_per_cell: f32,
+    pub intent: Option<Direction>,
+}
+
+#[derive(Component, Debug)]
+#[component(storage = "SparseSet")]
+pub struct GridMoveState {
+    pub from: I64Vec2,
+    pub to: I64Vec2,
+    pub t: f32,
 }

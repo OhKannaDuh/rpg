@@ -8,8 +8,6 @@ pub struct RpgWorld {
     pub tilesets: HashMap<i64, Handle<Image>>,
     pub levels: HashMap<String, Level>,
     pub grid_size: i64,
-    pub active_level_key: Option<String>,
-    pub level_request: Option<String>,
 }
 
 impl RpgWorld {
@@ -41,8 +39,8 @@ impl RpgWorld {
             };
 
             info!(
-                " - Loaded layer definition: {} of type {:?}",
-                def.identifier, def.layer_type
+                " - Loaded layer definition: {} of type {:?}, z: {}.",
+                def.identifier, def.layer_type, def.z
             );
 
             layer_definitions.insert(layer_def.identifier.clone(), def);
@@ -64,54 +62,14 @@ impl RpgWorld {
             tilesets: asset.tilesets.clone(),
             levels,
             grid_size: project.default_grid_size,
-            active_level_key: None,
-            level_request: None,
         }
     }
 
-    pub fn get_active_level(&self) -> Option<&Level> {
-        if let Some(active_key) = &self.active_level_key {
-            return self.levels.get(active_key);
-        }
-
-        None
+    pub fn get_levels_from_ids(&self, ids: Vec<String>) -> Vec<&Level> {
+        ids.iter().filter_map(|id| self.levels.get(id)).collect()
     }
 
-    pub fn get_entity_def(&self, identifier: &str) -> Option<&EntityDef> {
-        self.entity_definitions.get(identifier)
-    }
-
-    pub fn get_layer_def(&self, identifier: &str) -> Option<&LayerDef> {
-        self.layer_definitions.get(identifier)
-    }
-
-    pub fn get_tile_layers(&self) -> HashMap<String, &TileLayer> {
-        if let Some(active_key) = &self.active_level_key
-            && let Some(level) = self.levels.get(active_key)
-        {
-            return level
-                .tile_layers
-                .iter()
-                .map(|(k, v)| (k.clone(), v))
-                .collect();
-        }
-
-        HashMap::new()
-    }
-
-    pub fn request_level_change(&mut self, iid: &str) {
-        if iid == self.level_request.as_deref().unwrap_or("") {
-            return;
-        }
-
-        if iid == self.active_level_key.as_deref().unwrap_or("") {
-            warn!(
-                "Requested level change to the currently active level: {}.",
-                iid
-            );
-            return;
-        }
-
-        self.level_request = Some(iid.to_string());
+    pub fn get_level_at_point(&self, point: Vec2) -> Option<&Level> {
+        self.levels.values().find(|level| level.contains(point))
     }
 }

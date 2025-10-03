@@ -38,8 +38,33 @@ impl LayerDef {
             identifier: instance.identifier.clone(),
             layer_type,
             grid_size: instance.grid_size,
-            z: instance.uid as i32,
+            z: LayerDef::z_from_instance(instance),
         })
+    }
+
+    fn z_from_instance(instance: &LayerDefinition) -> i32 {
+        match instance.identifier.as_str() {
+            "BASE" => -10,
+            "BG_AUTO_1" => -8,
+            "BG_TILES_1" => -7,
+            "BG_AUTO_2" => -6,
+            "BG_TILES_2" => -5,
+            "BG_AUTO_3" => -4,
+            "BG_TILES_3" => -3,
+            "BG_AUTO_4" => -2,
+            "BG_TILES_4" => -1,
+
+            "FG_AUTO_1" => 1,
+            "FG_TILES_1" => 2,
+            "FG_AUTO_2" => 3,
+            "FG_TILES_2" => 4,
+            "FG_AUTO_3" => 5,
+            "FG_TILES_3" => 6,
+            "FG_AUTO_4" => 7,
+            "FG_TILES_4" => 8,
+
+            _ => 0,
+        }
     }
 }
 

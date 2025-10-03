@@ -15,13 +15,12 @@ pub struct Level {
     pub size: Size,
     pub grid: Grid,
     pub transform: LdtkLevelTransform,
-    // pub world_origin: WorldOrigin,
     pub tile_layers: HashMap<String, TileLayer>,
     pub entity_layers: HashMap<String, EntityLayer>,
     pub int_grid_layers: HashMap<String, IntGridLayer>,
     pub auto_layers: HashMap<String, AutoLayer>,
     pub entities: HashMap<String, LdtkEntity>,
-    pub neighbor_levels: HashMap<Direction, Vec<String>>,
+    pub neighbor_levels: HashSet<String>,
 }
 
 impl Level {
@@ -104,21 +103,10 @@ impl Level {
             }
         }
 
-        let mut neighbor_levels = HashMap::new();
-        neighbor_levels.insert(Direction::North, vec![]);
-        neighbor_levels.insert(Direction::East, vec![]);
-        neighbor_levels.insert(Direction::South, vec![]);
-        neighbor_levels.insert(Direction::West, vec![]);
-
+        let mut neighbor_levels = HashSet::new();
         for neighbor in &instance.neighbours {
-            if let Some(direction) = Direction::from_ldtk_neighbor(neighbor.dir.clone())
-                && let Some(levels) = neighbor_levels.get_mut(&direction)
-            {
-                levels.push(neighbor.level_iid.clone());
-            }
+            neighbor_levels.insert(neighbor.level_iid.clone());
         }
-
-        neighbor_levels.retain(|_, levels| !levels.is_empty());
 
         Level {
             identifier: instance.identifier.clone(),
@@ -141,5 +129,15 @@ impl Level {
             entities,
             neighbor_levels,
         }
+    }
+
+    pub fn contains(&self, pos: Vec2) -> bool {
+        let size = self.size.pixels().as_vec2();
+        let bottom_left = self.transform.bottom_left_bevy().as_vec2();
+
+        pos.x >= bottom_left.x
+            && pos.y >= bottom_left.y
+            && pos.x < bottom_left.x + size.x
+            && pos.y < bottom_left.y + size.y
     }
 }

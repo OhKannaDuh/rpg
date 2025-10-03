@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use_mod!(assets, world, level, layer, entity, nav);
+use_mod!(assets, world, level, level_manager, layer, entity, nav);
 
 mod systems;
 

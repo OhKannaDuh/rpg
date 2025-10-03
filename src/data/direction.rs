@@ -1,9 +1,10 @@
-use bevy::reflect::Reflect;
+use bevy::{math::IVec2, reflect::Reflect};
 
-#[derive(Debug, Reflect, Clone, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Reflect, Debug, PartialEq, Eq, Hash, Default)]
 pub enum Direction {
     North,
     East,
+    #[default]
     South,
     West,
 }
@@ -16,6 +17,15 @@ impl Direction {
             "s" => Some(Direction::South),
             "w" => Some(Direction::West),
             _ => None,
+        }
+    }
+
+    pub fn delta(self) -> IVec2 {
+        match self {
+            Direction::North => IVec2::new(0, 1),
+            Direction::South => IVec2::new(0, -1),
+            Direction::West => IVec2::new(-1, 0),
+            Direction::East => IVec2::new(1, 0),
         }
     }
 }

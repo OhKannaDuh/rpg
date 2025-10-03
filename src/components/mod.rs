@@ -1,1 +1,1 @@
-use_mod!(actor);
+use_mod!(actor, ui, world);
