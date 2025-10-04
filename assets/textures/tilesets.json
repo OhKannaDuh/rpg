@@ -1,0 +1,592 @@
+{
+    "tile_size": 16,
+    "input": "/Code/rpg/assets/textures/templates/components.png",
+    "generation": [
+        {
+            "preset": "grass",
+            "output_file": "/Code/rpg/assets/textures/generated/g.tiles.grass.meadows.png",
+            "biome": "meadows"
+        },
+        {
+            "preset": "grass",
+            "output_file": "/Code/rpg/assets/textures/generated/g.tiles.grass.highlands.png",
+            "biome": "highlands"
+        },
+        {
+            "preset": "grass",
+            "output_file": "/Code/rpg/assets/textures/generated/g.tiles.grass.swamp.png",
+            "biome": "swamp"
+        },
+        {
+            "preset": "grass",
+            "output_file": "/Code/rpg/assets/textures/generated/g.tiles.grass.jungle.png",
+            "biome": "jungle"
+        },
+        {
+            "preset": "grass",
+            "output_file": "/Code/rpg/assets/textures/generated/g.tiles.grass.autumnal.png",
+            "biome": "autumnal"
+        },
+        {
+            "preset": "grass",
+            "output_file": "/Code/rpg/assets/textures/generated/g.tiles.grass.cherry_blossom.png",
+            "biome": "cherry_blossom"
+        },
+        {
+            "preset": "grass",
+            "output_file": "/Code/rpg/assets/textures/generated/g.tiles.grass.scorched.png",
+            "biome": "scorched"
+        },
+        {
+            "preset": "grass",
+            "output_file": "/Code/rpg/assets/textures/generated/g.tiles.grass.savanna.png",
+            "biome": "savanna"
+        },
+        {
+            "preset": "grass",
+            "output_file": "/Code/rpg/assets/textures/generated/g.tiles.grass.meadows.png",
+            "biome": "meadows"
+        },
+        {
+            "preset": "blob",
+            "output_file": "/Code/rpg/assets/textures/generated/g.tiles.blob.tundra.png",
+            "biome": "tundra"
+        },
+        {
+            "preset": "blob",
+            "output_file": "/Code/rpg/assets/textures/generated/g.tiles.blob.desert.png",
+            "biome": "desert"
+        }
+    ],
+    "palette": {
+        "grass_base": "a8ba44",
+        "grass_edge": "798400",
+        "grass_highlight_l": "cbdf5b",
+        "grass_highlight_d": "95a53c",
+        "dirt_base": "dedf7f",
+        "blob_base": "e6c98b",
+        "blob_edge": "c49a6c",
+        "blob_highlight_l": "ffd18a",
+        "blob_highlight_d": "d6b28b",
+        "dirt_highlight_l": "cabc5e",
+        "dirt_highlight_d": "9a8c30",
+        "water_base": "76b5c5",
+        "water_edge": "9cd6e0",
+        "cliff_base": "8da3a7",
+        "cliff_edge": "566166",
+        "cliff_highlight_4": "6b7c7f",
+        "cliff_highlight_3": "7c8f93",
+        "cliff_highlight_2": "84999d",
+        "cliff_highlight_1": "a2bbc0"
+    },
+    "tiles": {
+        "grass": {
+            "x": 1,
+            "y": 1
+        },
+        "water": {
+            "x": 8,
+            "y": 1
+        },
+        "blob": {
+            "x": 15,
+            "y": 1
+        },
+        "dirt": {
+            "x": 21,
+            "y": 0
+        }
+    },
+    "components": {
+        "grass_tiles": {
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 5
+        },
+        "water_tiles": {
+            "x": 7,
+            "y": 0,
+            "w": 6,
+            "h": 5
+        },
+        "blob_tiles": {
+            "x": 14,
+            "y": 0,
+            "w": 6,
+            "h": 5
+        },
+        "dirt_tiles": {
+            "x": 21,
+            "y": 0,
+            "w": 1,
+            "h": 3
+        },
+        "grass_cliff_base": {
+            "x": 0,
+            "y": 6,
+            "w": 5,
+            "h": 3
+        },
+        "grass_cliff_top": {
+            "x": 0,
+            "y": 10,
+            "w": 5,
+            "h": 3
+        },
+        "cliff": {
+            "x": 0,
+            "y": 14,
+            "w": 5,
+            "h": 3
+        },
+        "blob_cliff_base": {
+            "x": 14,
+            "y": 6,
+            "w": 5,
+            "h": 3
+        },
+        "blob_cliff_top": {
+            "x": 14,
+            "y": 10,
+            "w": 5,
+            "h": 3
+        },
+        "water_1_cliff_base": {
+            "x": 7,
+            "y": 6,
+            "w": 5,
+            "h": 3
+        },
+        "water_2_cliff_base": {
+            "x": 7,
+            "y": 10,
+            "w": 5,
+            "h": 3
+        },
+        "water_3_cliff_base": {
+            "x": 7,
+            "y": 14,
+            "w": 5,
+            "h": 3
+        }
+    },
+    "presets": {
+        "grass": [
+            {
+                "component": "grass_tiles",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "component": "dirt_tiles",
+                "x": 5,
+                "y": 1
+            },
+            {
+                "component": "water_tiles",
+                "x": 0,
+                "y": 5
+            },
+            {
+                "base": "dirt",
+                "component": "grass_tiles",
+                "x": 6,
+                "y": 0
+            },
+            {
+                "base": "dirt",
+                "component": "water_tiles",
+                "x": 6,
+                "y": 5
+            },
+            {
+                "base": "water",
+                "component": "grass_tiles",
+                "x": 12,
+                "y": 0
+            },
+            {
+                "base": "grass",
+                "component": "water_tiles",
+                "x": 12,
+                "y": 5
+            },
+            {
+                "component": "cliff",
+                "x": 0,
+                "y": 10
+            },
+            {
+                "components": [
+                    "cliff",
+                    "grass_cliff_top"
+                ],
+                "x": 5,
+                "y": 10
+            },
+            {
+                "components": [
+                    "cliff",
+                    "grass_cliff_base"
+                ],
+                "x": 0,
+                "y": 13
+            },
+            {
+                "components": [
+                    "cliff",
+                    "grass_cliff_base",
+                    "grass_cliff_top"
+                ],
+                "x": 5,
+                "y": 13
+            },
+            {
+                "components": [
+                    "cliff",
+                    "water_1_cliff_base"
+                ],
+                "x": 0,
+                "y": 16
+            },
+            {
+                "components": [
+                    "cliff",
+                    "water_2_cliff_base"
+                ],
+                "x": 0,
+                "y": 19
+            },
+            {
+                "components": [
+                    "cliff",
+                    "water_3_cliff_base"
+                ],
+                "x": 0,
+                "y": 22
+            },
+            {
+                "components": [
+                    "cliff",
+                    "water_1_cliff_base",
+                    "grass_cliff_top"
+                ],
+                "x": 5,
+                "y": 16
+            },
+            {
+                "components": [
+                    "cliff",
+                    "water_2_cliff_base",
+                    "grass_cliff_top"
+                ],
+                "x": 5,
+                "y": 19
+            },
+            {
+                "components": [
+                    "cliff",
+                    "water_3_cliff_base",
+                    "grass_cliff_top"
+                ],
+                "x": 5,
+                "y": 22
+            }
+        ],
+        "blob": [
+            {
+                "component": "blob_tiles",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "component": "dirt_tiles",
+                "x": 5,
+                "y": 1
+            },
+            {
+                "component": "water_tiles",
+                "x": 0,
+                "y": 5
+            },
+            {
+                "base": "dirt",
+                "component": "blob_tiles",
+                "x": 6,
+                "y": 0
+            },
+            {
+                "base": "dirt",
+                "component": "water_tiles",
+                "x": 6,
+                "y": 5
+            },
+            {
+                "base": "water",
+                "component": "blob_tiles",
+                "x": 12,
+                "y": 0
+            },
+            {
+                "base": "blob",
+                "component": "water_tiles",
+                "x": 12,
+                "y": 5
+            },
+            {
+                "component": "cliff",
+                "x": 0,
+                "y": 10
+            },
+            {
+                "components": [
+                    "cliff",
+                    "blob_cliff_top"
+                ],
+                "x": 5,
+                "y": 10
+            },
+            {
+                "components": [
+                    "cliff",
+                    "blob_cliff_base"
+                ],
+                "x": 0,
+                "y": 13
+            },
+            {
+                "components": [
+                    "cliff",
+                    "blob_cliff_base",
+                    "blob_cliff_top"
+                ],
+                "x": 5,
+                "y": 13
+            },
+            {
+                "components": [
+                    "cliff",
+                    "water_1_cliff_base"
+                ],
+                "x": 0,
+                "y": 16
+            },
+            {
+                "components": [
+                    "cliff",
+                    "water_2_cliff_base"
+                ],
+                "x": 0,
+                "y": 19
+            },
+            {
+                "components": [
+                    "cliff",
+                    "water_3_cliff_base"
+                ],
+                "x": 0,
+                "y": 22
+            },
+            {
+                "components": [
+                    "cliff",
+                    "water_1_cliff_base",
+                    "blob_cliff_top"
+                ],
+                "x": 5,
+                "y": 16
+            },
+            {
+                "components": [
+                    "cliff",
+                    "water_2_cliff_base",
+                    "blob_cliff_top"
+                ],
+                "x": 5,
+                "y": 19
+            },
+            {
+                "components": [
+                    "cliff",
+                    "water_3_cliff_base",
+                    "blob_cliff_top"
+                ],
+                "x": 5,
+                "y": 22
+            }
+        ]
+    },
+    "biomes": {
+        "meadows": {
+            "grass_base": "a8ba44",
+            "grass_edge": "798400",
+            "grass_highlight_l": "cbdf5b",
+            "grass_highlight_d": "95a53c",
+            "dirt_base": "8b7351",
+            "dirt_highlight_l": "a18a66",
+            "dirt_highlight_d": "66543a",
+            "water_base": "76b5c5",
+            "water_edge": "9cd6e0",
+            "cliff_base": "7b6f63",
+            "cliff_edge": "4f463d",
+            "cliff_highlight_4": "5e5349",
+            "cliff_highlight_3": "6e6358",
+            "cliff_highlight_2": "8a7f73",
+            "cliff_highlight_1": "a3968a"
+        },
+        "highlands": {
+            "grass_base": "7fae2b",
+            "grass_edge": "5e7a16",
+            "grass_highlight_l": "a9d24f",
+            "grass_highlight_d": "6a9323",
+            "dirt_base": "7a5e3a",
+            "dirt_highlight_l": "96764f",
+            "dirt_highlight_d": "5b452a",
+            "water_base": "5fa9c8",
+            "water_edge": "87cfe2",
+            "cliff_base": "6f6760",
+            "cliff_edge": "49433b",
+            "cliff_highlight_4": "585048",
+            "cliff_highlight_3": "6b6259",
+            "cliff_highlight_2": "867c72",
+            "cliff_highlight_1": "a79a8f"
+        },
+        "swamp": {
+            "grass_base": "5b6d2a",
+            "grass_edge": "3e4a16",
+            "grass_highlight_l": "7e9440",
+            "grass_highlight_d": "4c5b1f",
+            "dirt_base": "5a4a2f",
+            "dirt_highlight_l": "756246",
+            "dirt_highlight_d": "42361f",
+            "water_base": "3f5a4b",
+            "water_edge": "587a62",
+            "cliff_base": "61584f",
+            "cliff_edge": "3f3933",
+            "cliff_highlight_4": "4f4740",
+            "cliff_highlight_3": "60574f",
+            "cliff_highlight_2": "7a7168",
+            "cliff_highlight_1": "9a9087"
+        },
+        "jungle": {
+            "grass_base": "3f9c3a",
+            "grass_edge": "2e6f28",
+            "grass_highlight_l": "64c85e",
+            "grass_highlight_d": "338a35",
+            "dirt_base": "5f4a2a",
+            "dirt_highlight_l": "7a603b",
+            "dirt_highlight_d": "44351f",
+            "water_base": "2e9db4",
+            "water_edge": "58c7d7",
+            "cliff_base": "5e524a",
+            "cliff_edge": "3f3932",
+            "cliff_highlight_4": "4b433c",
+            "cliff_highlight_3": "5f564e",
+            "cliff_highlight_2": "7b7169",
+            "cliff_highlight_1": "a09388"
+        },
+        "autumnal": {
+            "grass_base": "c77d2a",
+            "grass_edge": "8e5318",
+            "grass_highlight_l": "e39c47",
+            "grass_highlight_d": "a46321",
+            "dirt_base": "8b6a43",
+            "dirt_highlight_l": "a9825a",
+            "dirt_highlight_d": "664a2c",
+            "water_base": "6ea0b8",
+            "water_edge": "95c4d4",
+            "cliff_base": "746356",
+            "cliff_edge": "4c4239",
+            "cliff_highlight_4": "5a4f45",
+            "cliff_highlight_3": "6b6055",
+            "cliff_highlight_2": "887b6f",
+            "cliff_highlight_1": "a8998b"
+        },
+        "cherry_blossom": {
+            "grass_base": "a7d8a8",
+            "grass_edge": "7fb07f",
+            "grass_highlight_l": "cdeece",
+            "grass_highlight_d": "93c693",
+            "dirt_base": "8b6b5a",
+            "dirt_highlight_l": "a38473",
+            "dirt_highlight_d": "6a5044",
+            "water_base": "93cbe3",
+            "water_edge": "bfe4f2",
+            "cliff_base": "8b807a",
+            "cliff_edge": "5c544f",
+            "cliff_highlight_4": "6a625c",
+            "cliff_highlight_3": "7c736d",
+            "cliff_highlight_2": "998f88",
+            "cliff_highlight_1": "b8ada6"
+        },
+        "scorched": {
+            "grass_base": "6a5448",
+            "grass_edge": "4a3a31",
+            "grass_highlight_l": "8a6d5e",
+            "grass_highlight_d": "5b473d",
+            "dirt_base": "4a3b32",
+            "dirt_highlight_l": "695247",
+            "dirt_highlight_d": "352a23",
+            "water_base": "d44b1a",
+            "water_edge": "f07e1a",
+            "cliff_base": "3a2f2b",
+            "cliff_edge": "1f1a18",
+            "cliff_highlight_4": "2a2320",
+            "cliff_highlight_3": "3a302c",
+            "cliff_highlight_2": "524741",
+            "cliff_highlight_1": "6a5e57"
+        },
+        "savanna": {
+            "grass_base": "c6b44a",
+            "grass_edge": "9a8a2d",
+            "grass_highlight_l": "e1d678",
+            "grass_highlight_d": "b5a63d",
+            "dirt_base": "7b5a3a",
+            "dirt_highlight_l": "997351",
+            "dirt_highlight_d": "58412b",
+            "water_base": "6c9bb0",
+            "water_edge": "90bcc8",
+            "cliff_base": "756a60",
+            "cliff_edge": "4e463f",
+            "cliff_highlight_4": "5b524a",
+            "cliff_highlight_3": "6d645b",
+            "cliff_highlight_2": "8a8177",
+            "cliff_highlight_1": "aa9e93"
+        },
+        "tundra": {
+            "blob_base": "bbd3e8",
+            "blob_edge": "7fa6bf",
+            "blob_highlight_l": "e5f2fb",
+            "blob_highlight_d": "9ab9d0",
+            "dirt_base": "766b62",
+            "dirt_highlight_l": "92877e",
+            "dirt_highlight_d": "5a5049",
+            "water_base": "8fd0de",
+            "water_edge": "bdeaf1",
+            "cliff_base": "8b8f94",
+            "cliff_edge": "5b5e62",
+            "cliff_highlight_4": "4f5256",
+            "cliff_highlight_3": "6a6e72",
+            "cliff_highlight_2": "8f9397",
+            "cliff_highlight_1": "b6babd"
+        },
+        "desert": {
+            "blob_base": "d9c27a",
+            "blob_edge": "b59e55",
+            "blob_highlight_l": "f0e2ad",
+            "blob_highlight_d": "c8ad67",
+            "dirt_base": "a17f51",
+            "dirt_highlight_l": "bc9a6b",
+            "dirt_highlight_d": "7a5d3f",
+            "water_base": "5fb7b2",
+            "water_edge": "8fd6d2",
+            "cliff_base": "8a7a6a",
+            "cliff_edge": "5c4f44",
+            "cliff_highlight_4": "4f453c",
+            "cliff_highlight_3": "685b50",
+            "cliff_highlight_2": "8a7b6d",
+            "cliff_highlight_1": "b2a294"
+        }
+    }
+}
