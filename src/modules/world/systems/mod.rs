@@ -1,3 +1,2 @@
-mod activate_levels;
-mod level_transition;
+mod activate_chunks;
 mod setup_world;

@@ -24,14 +24,4 @@ pub enum GameState {
     Playing,
     Dialogue,
     Cutscene,
-    LevelTransition,
-}
-
-#[derive(SubStates, Copy, Clone, Eq, PartialEq, Hash, Debug, Default)]
-#[source(GameState = GameState::LevelTransition)]
-pub enum LevelTransitionState {
-    #[default]
-    FadingOut,
-    Loading,
-    FadingIn,
 }

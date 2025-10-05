@@ -1,8 +1,6 @@
-use bevy::math::I64Vec2;
-
-use crate::data::Rect;
-
 use super::*;
+use crate::data::Rect;
+use bevy::math::I64Vec2;
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub enum NavFlag {
@@ -32,11 +30,11 @@ pub struct Nav {
 }
 
 impl Nav {
-    pub fn new(level: &Level) -> Self {
-        let size = level.size.tiles();
-        let g = level.grid.grid_size;
+    pub fn new(chunk: &Chunk) -> Self {
+        let size = chunk.size.tiles();
+        let g = chunk.grid.grid_size;
 
-        let bl_px = level.transform.bottom_left_bevy();
+        let bl_px = chunk.transform.bottom_left_bevy();
 
         fn div_floor_i64(a: i64, b: i64) -> i64 {
             let (q, r) = (a / b, a % b);

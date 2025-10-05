@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use_mod!(assets, world, level, level_manager, layer, entity, nav);
+use_mod!(assets, world, chunk, chunk_manager, layer, entity, nav);
 
 mod systems;
 
@@ -17,5 +17,10 @@ impl Plugin for WorldPlugin {
             LoadingStateConfig::new(AppLoadingState::LoadingAssets)
                 .load_collection::<WorldAssets>(),
         );
+
+        app.add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(
+            PIXELS_PER_METER,
+        ))
+        .add_plugins(RapierDebugRenderPlugin::default());
     }
 }

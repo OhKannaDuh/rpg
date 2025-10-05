@@ -1,39 +1,66 @@
+use std::fmt::Display;
+
 use bevy::{log::warn, platform::collections::HashMap};
 
 use super::*;
 
-#[derive(Event)]
-#[add_event(plugin = WorldPlugin)]
-pub struct LevelChangedEvent {
-    pub from: Option<String>,
-    pub to: String,
+#[derive(Clone, Debug, PartialEq, Eq, Hash, Ord, PartialOrd)]
+pub struct ChunkId(pub String);
+
+impl ChunkId {
+    pub fn new(id: impl Into<String>) -> Self {
+        Self(id.into())
+    }
+
+    pub fn from_level(level: &ldtk_rust::Level) -> Self {
+        Self(level.iid.clone())
+    }
 }
 
-pub struct Level {
-    pub identifier: String,
-    pub iid: String,
+impl Display for ChunkId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub struct ChunkPosition {
+    pub x: i64,
+    pub y: i64,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub struct TilePosition {
+    pub local_x: i64,
+    pub local_y: i64,
+    pub world_x: i64,
+    pub world_y: i64,
+}
+
+pub struct Chunk {
+    pub name: String,
+    pub id: ChunkId,
     pub size: Size,
     pub grid: Grid,
-    pub transform: LdtkLevelTransform,
-    pub tile_layers: HashMap<String, TileLayer>,
-    pub entity_layers: HashMap<String, EntityLayer>,
-    pub int_grid_layers: HashMap<String, IntGridLayer>,
-    pub auto_layers: HashMap<String, AutoLayer>,
+    pub transform: ChunkTransform,
+    pub position: ChunkPosition,
+    pub layer_groups: LayerGroups,
+    // pub tile_layers: HashMap<String, TileLayer>,
+    // pub entity_layers: HashMap<String, EntityLayer>,
+    // pub int_grid_layers: HashMap<String, IntGridLayer>,
+    // pub auto_layers: HashMap<String, AutoLayer>,
     pub entities: HashMap<String, LdtkEntity>,
-    pub neighbor_levels: HashSet<String>,
+    pub neighbor_chunks: HashSet<ChunkId>,
 }
 
-impl Level {
+impl Chunk {
     pub fn from_instance(
         instance: &ldtk_rust::Level,
         project: &ldtk_rust::Project,
         layer_definitions: &HashMap<String, LayerDef>,
         entity_definitions: &HashMap<String, EntityDef>,
     ) -> Self {
-        let mut tile_layers = HashMap::new();
-        let mut entity_layers = HashMap::new();
-        let mut int_grid_layers = HashMap::new();
-        let mut auto_layers = HashMap::new();
+        let mut layer_groups = LayerGroups::default();
 
         if let Some(layers) = &instance.layer_instances {
             for layer in layers {
@@ -49,25 +76,25 @@ impl Level {
 
                 match LayerType::from_key(layer.layer_instance_type.clone()) {
                     Some(LayerType::Tile) => {
-                        tile_layers.insert(
+                        layer_groups.tile_layers.insert(
                             layer.iid.clone(),
                             TileLayer::from_instance(layer, iid, def.clone()),
                         );
                     }
                     Some(LayerType::Entity) => {
-                        entity_layers.insert(
+                        layer_groups.entity_layers.insert(
                             layer.iid.clone(),
                             EntityLayer::from_instance(layer, iid, def.clone()),
                         );
                     }
                     Some(LayerType::IntGrid) => {
-                        int_grid_layers.insert(
+                        layer_groups.int_grid_layers.insert(
                             layer.iid.clone(),
                             IntGridLayer::from_instance(layer, iid, def.clone()),
                         );
                     }
                     Some(LayerType::AutoLayer) => {
-                        auto_layers.insert(
+                        layer_groups.auto_layers.insert(
                             layer.iid.clone(),
                             AutoLayer::from_instance(layer, iid, def.clone()),
                         );
@@ -78,7 +105,7 @@ impl Level {
         }
 
         let mut entities: HashMap<String, LdtkEntity> = HashMap::new();
-        for layer in entity_layers.values() {
+        for layer in layer_groups.entity_layers.values() {
             for entity in &layer.instance.entity_instances {
                 let Some(def) = entity_definitions.get(&entity.identifier) else {
                     warn!(
@@ -93,24 +120,26 @@ impl Level {
                     entity.identifier, entity.iid
                 );
 
-                let level_iid = instance.iid.clone();
+                let chunk_iid = instance.iid.clone();
                 let layer_iid = layer.instance.iid.clone();
 
                 entities.insert(
                     layer_iid.clone(),
-                    LdtkEntity::from_instance(entity, level_iid, layer_iid, def.clone()),
+                    LdtkEntity::from_instance(entity, chunk_iid, layer_iid, def.clone()),
                 );
             }
         }
 
-        let mut neighbor_levels = HashSet::new();
-        for neighbor in &instance.neighbours {
-            neighbor_levels.insert(neighbor.level_iid.clone());
-        }
+        let transform = ChunkTransform::from_instance(instance);
+        let pixel_position = transform.bottom_left_bevy().as_vec2();
+        let position = ChunkPosition {
+            x: (pixel_position.x / PIXELS_PER_CHUNK).floor() as i64,
+            y: (pixel_position.y / PIXELS_PER_CHUNK).floor() as i64,
+        };
 
-        Level {
-            identifier: instance.identifier.clone(),
-            iid: instance.iid.clone(),
+        Chunk {
+            name: instance.identifier.clone(),
+            id: ChunkId::from_level(instance),
             size: Size::new(
                 instance.px_wid / project.default_grid_size,
                 instance.px_hei / project.default_grid_size,
@@ -121,23 +150,15 @@ impl Level {
                 instance.px_hei / project.default_grid_size,
                 project.default_grid_size,
             ),
-            transform: LdtkLevelTransform::from_instance(instance),
-            tile_layers,
-            entity_layers,
-            int_grid_layers,
-            auto_layers,
+            transform,
+            position,
+            layer_groups,
             entities,
-            neighbor_levels,
+            neighbor_chunks: instance
+                .neighbours
+                .iter()
+                .map(|n| ChunkId::new(n.level_iid.clone()))
+                .collect(),
         }
-    }
-
-    pub fn contains(&self, pos: Vec2) -> bool {
-        let size = self.size.pixels().as_vec2();
-        let bottom_left = self.transform.bottom_left_bevy().as_vec2();
-
-        pos.x >= bottom_left.x
-            && pos.y >= bottom_left.y
-            && pos.x < bottom_left.x + size.x
-            && pos.y < bottom_left.y + size.y
     }
 }

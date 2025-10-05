@@ -21,7 +21,6 @@ fn main() {
         .init_state::<AppState>()
         .add_sub_state::<AppLoadingState>()
         .add_sub_state::<GameState>()
-        .add_sub_state::<LevelTransitionState>()
         .add_loading_state(
             LoadingState::new(AppLoadingState::LoadingAssets)
                 .continue_to_state(AppLoadingState::ProcessingWorldFile),
