@@ -15,10 +15,13 @@ game_module_build!(DevPlugin);
 impl GameModule for DevPlugin {
     fn plugins(&self, app: &mut App) {
         app.add_plugins((RemotePlugin::default(), RemoteHttpPlugin::default()));
+        // app.add_plugins(RapierDebugRenderPlugin::default());
     }
 
     fn systems(&self, app: &mut App) {
-        app.on_playing_game_update((render_global_entities_for_player,));
+        // app.on_playing_game_update((
+        //     render_global_entities_for_player,
+        // ));
     }
 }
 

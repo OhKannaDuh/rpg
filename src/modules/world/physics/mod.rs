@@ -24,8 +24,7 @@ impl GameModule for PhysicsPlugin {
                     },
                 },
             ),
-        )
-        .add_plugins(RapierDebugRenderPlugin::default());
+        );
     }
 
     fn systems(&self, app: &mut App) {

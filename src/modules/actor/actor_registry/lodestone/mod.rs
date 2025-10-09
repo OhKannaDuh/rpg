@@ -1,6 +1,9 @@
 prelude!();
 
+use bevy::camera::primitives::Aabb;
+
 use crate::modules::actor::actor_registry::*;
+use crate::modules::actor::animation::*;
 use crate::modules::actor::player::Player;
 use crate::modules::actor::*;
 
@@ -73,13 +76,30 @@ impl Lodestone {
         let lodestone = commands
             .spawn((
                 Lodestone,
+                source.transform(),
+                FootPosition(-21.0),
                 Sprite {
-                    image: assets.lodestone.clone(),
+                    image: assets.images["textures/entities/lodestone.png"].clone(),
+                    texture_atlas: Some(TextureAtlas {
+                        layout: assets.lodestone_layout.clone(),
+                        index: 0,
+                    }),
                     custom_size: Some(source.size()),
                     ..Default::default()
                 },
-                source.transform(),
-                FootPosition(-21.0),
+                ActorAnimator::static_animation(ActorAnimation {
+                    frames: vec![
+                        AnimationFrameMeta::new(0, 0.10),
+                        AnimationFrameMeta::new(1, 0.11),
+                        AnimationFrameMeta::new(2, 0.14),
+                        AnimationFrameMeta::new(3, 0.22),
+                        AnimationFrameMeta::new(4, 0.17),
+                        AnimationFrameMeta::new(5, 0.14),
+                        AnimationFrameMeta::new(6, 0.13),
+                        AnimationFrameMeta::new(7, 0.17),
+                    ],
+                    frame: 0,
+                }),
             ))
             .id();
 
@@ -87,7 +107,7 @@ impl Lodestone {
             ChildOf(lodestone),
             RigidBody::Fixed,
             Collider::capsule_x(8.0, 6.0),
-            Transform::from_xyz(0.0, -14.5, 0.0),
+            Transform::from_xyz(0.0, -17.0, 0.0),
         ));
 
         lodestone
@@ -96,11 +116,11 @@ impl Lodestone {
 
 fn handle_lodestone_teleport_messages(
     mut messages: MessageReader<TeleportToLodestone>,
-    mut targets: Query<&mut Transform, With<Actor>>,
+    mut targets: Query<(&mut Transform, &Aabb), With<Actor>>,
     global_map_entities: Res<GlobalMapEntities>,
 ) {
     for teleport in messages.read() {
-        let Ok(mut transform) = targets.get_mut(teleport.target) else {
+        let Ok((mut transform, aabb)) = targets.get_mut(teleport.target) else {
             warn!("Unable to get teleport target {}", teleport.target);
             continue;
         };
@@ -113,8 +133,13 @@ fn handle_lodestone_teleport_messages(
             continue;
         };
 
-        let z = transform.translation.z;
-        transform.translation = lodestone.center().as_vec2().extend(z);
+        // Destination south of the lodestone
+        let lodestone_half_height = 24.0;
+        let padding = 4.0;
+        let mut target_position = lodestone.center().as_vec2();
+        target_position.y -= lodestone_half_height + aabb.half_extents.y + padding;
+
+        transform.translation = target_position.extend(transform.translation.z);
     }
 }
 
