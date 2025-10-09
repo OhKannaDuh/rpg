@@ -1,0 +1,9 @@
+public!(
+    chunk_data,
+    tile_flags,
+    entity_def,
+    tileset_def,
+    layer_def,
+    layers,
+    entity
+);

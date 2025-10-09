@@ -1,0 +1,198 @@
+{
+  "main": {
+    "id": "175c16072e685feb",
+    "type": "split",
+    "children": [
+      {
+        "id": "d4d3793b00e6d795",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d81689a901f2396b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "battle/Brief Overview.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "b331babea3632b0d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "battle/Brief Overview.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "2c6f14078c3dcb69",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "battle/Synergies.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ],
+        "currentTab": 2
+      },
+      {
+        "id": "a6933b53e4756149",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "32e109698b0b3554",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "c466c210c3d20e9f",
+    "type": "split",
+    "children": [
+      {
+        "id": "83d2098b4f596176",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "22f5a7f47732af9c",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "e65afa02bbfa166e",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "171bab571c1abc3e",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "a8b250e7adb2a56a",
+    "type": "split",
+    "children": [
+      {
+        "id": "cd4e790cda28a7e7",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f23fceb360eaf5dc",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "battle/Synergies.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "db9836b5fd771ed8",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "battle/Synergies.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "1517a0f4dfa2ff45",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "ded20d3848afb535",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "battle/Synergies.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "2c6f14078c3dcb69",
+  "lastOpenFiles": [
+    "battle/Creatures.md",
+    "battle/Traits.md",
+    "battle/Synergies.md",
+    "battle/Brief Overview.md",
+    "battle/Aspects.md",
+    "Welcome.md",
+    "battle"
+  ]
+}

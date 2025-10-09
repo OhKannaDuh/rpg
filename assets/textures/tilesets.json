@@ -1,6 +1,6 @@
 {
     "tile_size": 16,
-    "input": "/Code/rpg/assets/textures/templates/components.png",
+    "input": "/Code/rpg/assets/textures/components.png",
     "generation": [
         {
             "preset": "grass",
@@ -169,6 +169,42 @@
             "y": 14,
             "w": 5,
             "h": 3
+        },
+        "bank_cliffs": {
+            "x": 0,
+            "y": 18,
+            "w": 3,
+            "h": 5
+        },
+        "bank_sand": {
+            "x": 0,
+            "y": 24,
+            "w": 3,
+            "h": 5
+        },
+        "bank_grass_top": {
+            "x": 0,
+            "y": 30,
+            "w": 3,
+            "h": 5
+        },
+        "bank_water_1": {
+            "x": 7,
+            "y": 18,
+            "w": 3,
+            "h": 5
+        },
+        "bank_water_2": {
+            "x": 7,
+            "y": 24,
+            "w": 3,
+            "h": 5
+        },
+        "bank_water_3": {
+            "x": 7,
+            "y": 30,
+            "w": 3,
+            "h": 5
         }
     },
     "presets": {
@@ -292,6 +328,36 @@
                 ],
                 "x": 5,
                 "y": 22
+            },
+            {
+                "components": [
+                    "bank_cliffs",
+                    "bank_grass_top",
+                    "bank_sand",
+                    "bank_water_1"
+                ],
+                "x": 10,
+                "y": 10
+            },
+            {
+                "components": [
+                    "bank_cliffs",
+                    "bank_grass_top",
+                    "bank_sand",
+                    "bank_water_2"
+                ],
+                "x": 10,
+                "y": 15
+            },
+            {
+                "components": [
+                    "bank_cliffs",
+                    "bank_grass_top",
+                    "bank_sand",
+                    "bank_water_3"
+                ],
+                "x": 10,
+                "y": 20
             }
         ],
         "blob": [

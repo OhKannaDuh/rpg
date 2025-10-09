@@ -1,0 +1,6 @@
+prelude!();
+
+pub struct {{name}}Plugin;
+game_module_build!({{name}}Plugin);
+
+impl GameModule for {{name}}Plugin {}
