@@ -1,3 +1,6 @@
 [submodule "external/ldtk_rust"]
 	path = external/ldtk_rust
 	url = https://github.com/OhKannaDuh/ldtk_rust.git
+[submodule "external/seldom_state"]
+	path = external/seldom_state
+	url = https://github.com/Seldom-SE/seldom_state.git

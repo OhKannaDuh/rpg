@@ -44,7 +44,7 @@ fn on_chunk_loaded(
 
         if let Some(collider) = data.get_collider() {
             info!("Spawning collider for chunk {:?}", data.id);
-            commands.spawn((ChildOf(event.entity), collider));
+            commands.spawn((ChildOf(event.entity), collider, WORLD_COLLISION));
         }
     }
 }

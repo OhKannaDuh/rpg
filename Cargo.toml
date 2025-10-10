@@ -20,6 +20,9 @@ fastrand = "2.3.0"
 bevy_rapier2d = { git = "https://github.com/lukasfri/bevy_rapier.git", branch = "master", features = [
     "debug-render-2d",
 ] }
+seldom_state = { path = "external/seldom_state" }
+serde = "1.0.228"
+anyhow = "1.0.100"
 
 
 [lints.clippy]

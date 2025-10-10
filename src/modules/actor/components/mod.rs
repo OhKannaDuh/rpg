@@ -67,4 +67,9 @@ pub struct ActorDebug;
 
 #[derive(Component, Reflect, Debug, Default)]
 #[reflect(Component)]
-pub struct ActorDebugRoot;
+pub struct ActorDebugRoot(pub String);
+
+#[derive(Component, Reflect, Debug, Default)]
+#[reflect(Component)]
+#[require(ActorDebug)]
+pub struct ActorDebugResolver;

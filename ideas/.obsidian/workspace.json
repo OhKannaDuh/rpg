@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "battle/Synergies.md",
+                "file": "battle/Aspects.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Synergies"
+              "title": "Aspects"
             }
           }
         ],
@@ -228,13 +228,13 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "6030addf3dbbdb1b",
+  "active": "32e109698b0b3554",
   "lastOpenFiles": [
+    "battle/Aspects.md",
+    "battle/Synergies.md",
     "battle/Creatures.md",
     "battle/Brief Overview.md",
-    "battle/Aspects.md",
     "battle/Traits.md",
-    "battle/Synergies.md",
     "Welcome.md",
     "battle"
   ]

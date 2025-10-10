@@ -8,7 +8,9 @@ plugins!(
     (creature, CreaturePlugin)
 );
 
-use crate::modules::world::map::*;
+use std::fmt::Write;
+
+use crate::modules::{actor::player::Player, world::map::*};
 use bevy::sprite::Anchor;
 
 pub struct ActorPlugin;
@@ -28,7 +30,12 @@ impl GameModule for ActorPlugin {
             CreaturePlugin,
         ));
 
-        app.on_playing_game_update((add_actor_debug_root, update_actor_debug_text, z_sort_actors));
+        app.on_playing_game_update((
+            add_actor_debug_root,
+            update_actor_debug_text,
+            update_actor_debug_resolver,
+            z_sort_actors,
+        ));
     }
 }
 
@@ -39,7 +46,7 @@ fn add_actor_debug_root(
 ) {
     for entity in &query {
         commands.spawn((
-            ActorDebugRoot,
+            ActorDebugRoot::default(),
             Text2d("Debug Info".into()),
             Transform::from_xyz(12.0, 8.0, 1.0).with_scale(Vec3::splat(0.3)),
             Anchor::TOP_LEFT,
@@ -54,39 +61,70 @@ fn add_actor_debug_root(
     }
 }
 
-fn update_actor_debug_text(
-    mut child_query: Query<(&ChildOf, &mut Text2d), With<ActorDebugRoot>>,
-    parent_query: Query<(&GridPosition, &Transform, &CurrentWorldId), With<ActorDebug>>,
-    chunk_positions: Res<ChunkPositionMap>,
+fn update_actor_debug_resolver(
+    mut child_query: Query<(&ChildOf, &mut ActorDebugRoot)>,
+    parent_query: Query<(&Transform, Option<&GridPosition>), With<ActorDebugResolver>>,
+    player_query: Single<&Transform, With<Player>>,
 ) {
-    for (child, mut text) in child_query.iter_mut() {
-        let Ok((grid_position, transform, current_world_id)) = parent_query.get(child.parent())
-        else {
+    let player_position = player_query.into_inner().translation.truncate();
+
+    for (child, mut debug) in child_query.iter_mut() {
+        let Ok((transform, grid_position_opt)) = parent_query.get(child.parent()) else {
             continue;
         };
 
-        let Some(world_id) = &current_world_id.0 else {
-            continue;
-        };
+        debug.0.clear();
 
-        let chunk_position = grid_position.get_chunk(transform);
-        let tile_position = grid_position.get_position_in_chunk(transform);
+        let position = transform.translation.truncate();
+        let distance = player_position.distance(transform.translation.truncate());
 
-        let mut level_id = "None";
-        if let Some(chunk_id) = chunk_positions.get(world_id, &chunk_position.get_chunk_coords()) {
-            level_id = chunk_id.0.as_str();
+        debug
+            .0
+            .write_fmt(format_args!("Distance: {:.2}\n", distance))
+            .ok();
+
+        debug
+            .0
+            .write_fmt(format_args!(
+                "Position: {:.2}, {:.2}\n",
+                position.x, position.y
+            ))
+            .ok();
+
+        if let Some(grid_position) = grid_position_opt {
+            let chunk_pos = grid_position.get_chunk(transform);
+            let tile_pos = grid_position.get_position_in_chunk(transform);
+
+            debug
+                .0
+                .write_fmt(format_args!(
+                    "Chunk: {}, {}\n",
+                    chunk_pos.chunk_x, chunk_pos.chunk_y
+                ))
+                .ok();
+
+            debug
+                .0
+                .write_fmt(format_args!(
+                    "Local Tile: {}, {}\n",
+                    tile_pos.local_x, tile_pos.local_y
+                ))
+                .ok();
+
+            debug
+                .0
+                .write_fmt(format_args!(
+                    "World Tile: {}, {}\n",
+                    tile_pos.world_x, tile_pos.world_y
+                ))
+                .ok();
         }
+    }
+}
 
-        text.0 = format!(
-            "Chunk: {}, {}\nLocal Tile: {}, {}\nWorld Tile: {}, {}\nLevel: {}",
-            chunk_position.chunk_x,
-            chunk_position.chunk_y,
-            tile_position.local_x,
-            tile_position.local_y,
-            tile_position.world_x,
-            tile_position.world_y,
-            level_id
-        );
+fn update_actor_debug_text(mut query: Query<(&ActorDebugRoot, &mut Text2d)>) {
+    for (root, mut text) in query.iter_mut() {
+        text.0 = root.0.clone();
     }
 }
 

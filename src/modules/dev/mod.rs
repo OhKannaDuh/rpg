@@ -18,11 +18,7 @@ impl GameModule for DevPlugin {
         // app.add_plugins(RapierDebugRenderPlugin::default());
     }
 
-    fn systems(&self, app: &mut App) {
-        // app.on_playing_game_update((
-        //     render_global_entities_for_player,
-        // ));
-    }
+    fn systems(&self, app: &mut App) {}
 }
 
 fn render_global_entities_for_player(
@@ -50,4 +46,8 @@ fn render_global_entities_for_player(
 
         gizmos.rect_2d(Isometry2d::from_translation(center), size, color);
     }
+}
+
+pub trait StateDebug {
+    fn debug(&self) -> String;
 }
