@@ -55,7 +55,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "battle/Aspects.md",
+                "file": "Battle/Aspects.md",
                 "mode": "source",
                 "source": false
               },
@@ -230,12 +230,14 @@
   },
   "active": "32e109698b0b3554",
   "lastOpenFiles": [
-    "battle/Aspects.md",
-    "battle/Synergies.md",
-    "battle/Creatures.md",
-    "battle/Brief Overview.md",
-    "battle/Traits.md",
+    "Systems.md",
+    "Battle/Untitled.md",
+    "Battle/Aspects.md",
+    "Battle/Synergies.md",
+    "Battle/Creatures.md",
+    "Battle/Brief Overview.md",
+    "Battle/Traits.md",
     "Welcome.md",
-    "battle"
+    "Battle"
   ]
 }
