@@ -114,19 +114,13 @@ pub fn process_chunk_queues(
 
                 let data = &tileset_def.custom_data(tile.t);
                 if data.starts_with("WaterAnimation") {
-                    info!("Animated water tile found: {}", data);
-
                     let stride_str = data
                         .split("Stride = ")
                         .nth(1)
                         .and_then(|s| s.split(')').next())
                         .unwrap_or("0");
 
-                    info!("Parsed stride string: '{}'", stride_str);
-
                     let stride: i64 = stride_str.parse().unwrap_or(0);
-
-                    info!("Parsed stride value: {}", stride);
 
                     tile_entity.insert(WaterTile {
                         base_texture_index: tile.t as u32,
