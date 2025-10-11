@@ -73,3 +73,7 @@ pub struct ActorDebugRoot(pub String);
 #[reflect(Component)]
 #[require(ActorDebug)]
 pub struct ActorDebugResolver;
+
+#[derive(Component, Clone, Copy, Reflect, Debug, Default)]
+#[reflect(Component)]
+pub struct FaceDirection(pub Direction);

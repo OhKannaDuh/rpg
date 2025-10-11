@@ -275,4 +275,61 @@ impl ChunkData {
             Some(Collider::compound(shapes))
         }
     }
+
+    pub fn get_nav_mesh(&self) -> NavigationMesh2d {
+        let w = TILES_PER_CHUNK_I64;
+        let h = TILES_PER_CHUNK_I64;
+        let g = TILE_SIZE;
+
+        let origin = self.position.get_tile_position();
+
+        let mut vmap: HashMap<(i64, i64), u32> = HashMap::new();
+        let mut vertices: Vec<Vec2> = Vec::new();
+        let mut polygons: Vec<Vec<usize>> = Vec::new();
+        let mut poly_types: Vec<usize> = Vec::new();
+
+        let mut corner = |tx: i64, ty: i64| -> u32 {
+            let px = (tx as f32) * g;
+            let py = (ty as f32) * g;
+
+            *vmap.entry((tx, ty)).or_insert_with(|| {
+                let idx = vertices.len() as u32;
+                vertices.push(Vec2::new(px, py));
+                idx
+            })
+        };
+
+        let at = |x: i64, y: i64| -> TileFlags {
+            let xi = x as usize;
+            let yi = y as usize;
+            self.flags[yi * (w as usize) + xi]
+        };
+
+        for y in 0..h {
+            for x in 0..w {
+                let flags = at(x, y);
+                if flags.is_blocked() {
+                    continue;
+                }
+
+                let wx = origin.world_x + x;
+                let wy = origin.world_y + y;
+
+                let v0 = corner(wx, wy);
+                let v1 = corner(wx + 1, wy);
+                let v2 = corner(wx + 1, wy + 1);
+                let v3 = corner(wx, wy + 1);
+
+                polygons.push(vec![v0 as usize, v1 as usize, v2 as usize, v3 as usize]);
+                poly_types.push(0);
+            }
+        }
+
+        NavigationMesh2d {
+            vertices,
+            polygons,
+            polygon_type_indices: poly_types,
+            height_mesh: None,
+        }
+    }
 }

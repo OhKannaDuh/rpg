@@ -39,7 +39,7 @@
 				"levelIid": "f3978580-8560-11f0-b058-451cb95ad6b6",
 				"layerIid": "f3978581-8560-11f0-b058-5f5bf267ae76",
 				"entityIid": "7bc13820-8560-11f0-b058-3f28c335864c"
-			}, "worldX": 264, "worldY": 312, "widPx": 48, "heiPx": 48, "fields" : {} },
+			}, "worldX": 248, "worldY": 296, "widPx": 48, "heiPx": 48, "fields" : {} },
 			{ "iids": {
 				"worldIid": "d9d177f0-8560-11f0-b058-8323d7e06366",
 				"levelIid": "f6447d10-8560-11f0-b058-ffc767eaee71",
@@ -282,8 +282,8 @@
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
-			"pivotX": 0.5,
-			"pivotY": 0.5,
+			"pivotX": 0,
+			"pivotY": 0,
 			"fieldDefs": [
 				{
 					"identifier": "IDENTIFIER",
@@ -21859,8 +21859,8 @@
 							},
 							{
 								"__identifier": "LODESTONE",
-								"__grid": [16,19],
-								"__pivot": [0.5,0.5],
+								"__grid": [15,18],
+								"__pivot": [0,0],
 								"__tags": [],
 								"__tile": { "tilesetUid": 3233, "x": 112, "y": 976, "w": 16, "h": 16 },
 								"__smartColor": "#BE4A2F",
@@ -21868,7 +21868,7 @@
 								"width": 48,
 								"height": 48,
 								"defUid": 3545,
-								"px": [264,312],
+								"px": [248,296],
 								"fieldInstances": [
 									{ "__identifier": "IDENTIFIER", "__type": "String", "__value": "TESTING_WORLD_LODESTONE_1", "__tile": null, "defUid": 3546, "realEditorValues": [{
 										"id": "V_String",
@@ -21876,8 +21876,8 @@
 									}] },
 									{ "__identifier": "TEST_FIELD", "__type": "Int", "__value": 12, "__tile": null, "defUid": 3547, "realEditorValues": [] }
 								],
-								"__worldX": 264,
-								"__worldY": 312
+								"__worldX": 248,
+								"__worldY": 296
 							}
 						]
 					},
@@ -24249,7 +24249,7 @@
 							{
 								"__identifier": "LODESTONE",
 								"__grid": [15,9],
-								"__pivot": [0.5,0.5],
+								"__pivot": [0,0],
 								"__tags": [],
 								"__tile": { "tilesetUid": 3233, "x": 112, "y": 976, "w": 16, "h": 16 },
 								"__smartColor": "#BE4A2F",

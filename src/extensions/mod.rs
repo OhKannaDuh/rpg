@@ -5,6 +5,10 @@ pub trait GameAppExt {
     fn on_playing_game_update<M, C>(&mut self, systems: C) -> &mut Self
     where
         C: IntoScheduleConfigs<ScheduleSystem, M>;
+
+    fn on_playing_game_fixed_update<M, C>(&mut self, systems: C) -> &mut Self
+    where
+        C: IntoScheduleConfigs<ScheduleSystem, M>;
 }
 
 impl GameAppExt for App {
@@ -14,7 +18,15 @@ impl GameAppExt for App {
     {
         self.add_systems(Update, systems.in_set(GameStatePlayingSet))
     }
+
+    fn on_playing_game_fixed_update<M, C>(&mut self, systems: C) -> &mut Self
+    where
+        C: IntoScheduleConfigs<ScheduleSystem, M>,
+    {
+        self.add_systems(FixedUpdate, systems.in_set(GameStatePlayingSet))
+    }
 }
+
 pub trait LoadCollectionExt {
     /// Uses the default `AppLoadingState::LoadingAssets`.
     fn load_asset_collection<C>(&mut self) -> &mut Self

@@ -1,8 +1,10 @@
 prelude!();
 
+use crate::modules::actor::creature::CreatureBehaviourPresetType;
 use crate::modules::actor::creature::SpawnCreatureMessage;
 use crate::modules::actor::*;
 use crate::modules::camera::*;
+use crate::modules::world::pathfinding::ArchipelagoId;
 use bevy::math::I64Vec2;
 use rand::rng;
 use rand::seq::IndexedRandom;
@@ -28,7 +30,12 @@ fn spawn_player(
     global_map_entities: Res<GlobalMapEntities>,
     world_identity_map: Res<WorldIdentityMap>,
     mut spawn_creature: MessageWriter<SpawnCreatureMessage>,
+    archipelago_id: Res<ArchipelagoId>,
 ) {
+    let Some(archipelago_id) = archipelago_id.0 else {
+        return;
+    };
+
     info!("Spawning player...");
 
     let mut start = I64Vec2::ZERO;
@@ -61,7 +68,6 @@ fn spawn_player(
             FootPosition(-TILE_SIZE / 2.0),
             CurrentWorldId(Some(world_id)),
             Transform::from_xyz(start.x as f32, start.y as f32, 0.0),
-            PlayerDebugResolver,
             CameraFocus,
             // Physics
             ENTITY_COLLISION,
@@ -74,6 +80,14 @@ fn spawn_player(
                 ..Default::default()
             },
             Sleeping::disabled(),
+            // Pathfinding, mainly for avoidance
+            Character2dBundle {
+                character: Default::default(),
+                settings: CharacterSettings {
+                    radius: DEFAULT_ACTOR_COLLIDER_RADIUS,
+                },
+                archipelago_ref: ArchipelagoRef2d::new(archipelago_id),
+            },
         ))
         .id();
 
@@ -86,30 +100,36 @@ fn spawn_player(
     let p3 = center + Vec2::new(-sqrt3_over_2 * r, -0.5 * r);
 
     spawn_creature.write(SpawnCreatureMessage {
-        name: "Steve".into(),
+        name: "Orange".into(),
         position: p1,
+        color: Color::srgb(1.0, 0.5, 0.0),
         owner: Some(player),
         spawn_radius: Some(128.0),
+        behaviour_preset: Some(CreatureBehaviourPresetType::Hyperactive),
     });
 
     spawn_creature.write(SpawnCreatureMessage {
-        name: "Anabelle".into(),
+        name: "Teal".into(),
         position: p2,
+        color: Color::srgb(0.0, 1.0, 1.0),
         owner: Some(player),
         spawn_radius: Some(128.0),
+        behaviour_preset: Some(CreatureBehaviourPresetType::Independent),
     });
 
     spawn_creature.write(SpawnCreatureMessage {
-        name: "Jorge".into(),
+        name: "Purple".into(),
         position: p3,
+        color: Color::srgb(0.5, 0.0, 0.5),
         owner: Some(player),
         spawn_radius: Some(128.0),
+        behaviour_preset: Some(CreatureBehaviourPresetType::Clingy),
     });
 }
 
 fn handle_input(
     keyboard: Res<ButtonInput<KeyCode>>,
-    query: Single<&mut KinematicCharacterController, With<Player>>,
+    query: Single<(&mut KinematicCharacterController, &mut Velocity2d), With<Player>>,
     time: Res<Time>,
 ) {
     let mut movement = Vec2::ZERO;
@@ -126,15 +146,17 @@ fn handle_input(
         movement.x += 1.0;
     }
 
+    let (mut controller, mut velocity) = query.into_inner();
+
     if movement == Vec2::ZERO {
+        velocity.velocity = Vec2::ZERO;
         return;
     }
 
     movement = movement.normalize();
-    movement *= DEFAULT_ACTOR_SPEED * time.delta_secs();
+    velocity.velocity = movement * DEFAULT_ACTOR_SPEED;
 
-    let mut controller = query.into_inner();
-    controller.translation = Some(movement);
+    controller.translation = Some(velocity.velocity * time.delta_secs());
 }
 
 #[derive(Component, Reflect, Debug, Default)]

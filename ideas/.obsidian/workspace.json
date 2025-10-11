@@ -55,7 +55,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "battle/Aspects.md",
+                "file": "Battle/Aspects.md",
                 "mode": "source",
                 "source": false
               },
@@ -74,10 +74,14 @@
             "id": "32e109698b0b3554",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "type": "markdown",
+              "state": {
+                "file": "Systems.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Systems"
             }
           }
         ]
@@ -228,14 +232,16 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "32e109698b0b3554",
+  "active": "22f5a7f47732af9c",
   "lastOpenFiles": [
-    "battle/Aspects.md",
-    "battle/Synergies.md",
-    "battle/Creatures.md",
-    "battle/Brief Overview.md",
-    "battle/Traits.md",
+    "Battle/Untitled.md",
+    "Systems.md",
+    "Battle/Aspects.md",
+    "Battle/Synergies.md",
+    "Battle/Creatures.md",
+    "Battle/Brief Overview.md",
+    "Battle/Traits.md",
     "Welcome.md",
-    "battle"
+    "Battle"
   ]
 }

@@ -47,6 +47,7 @@ impl GameModule for MapPlugin {
                 populate_layer_defs,
                 populate_tilesets,
                 populate_world_identity_map,
+                spawn_world_root,
             )
                 .in_set(AppLoadingSystems::PopulateDefinitions),
         );
@@ -56,7 +57,6 @@ impl GameModule for MapPlugin {
             (
                 populate_chunk_position_map,
                 populate_chunk_data_collection,
-                spawn_world_root,
                 populate_global_map_entities,
             )
                 .in_set(AppLoadingSystems::PopulateChunkData),

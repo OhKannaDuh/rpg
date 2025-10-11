@@ -4,7 +4,16 @@ use crate::prelude::*;
 #[macro_use]
 mod macros;
 
-mods!(states, system_sets, modules, config, extensions);
+mods!(
+    states,
+    system_sets,
+    modules,
+    config,
+    extensions,
+    state_machines,
+    ui,
+    data,
+);
 
 pub struct Core;
 
@@ -26,6 +35,8 @@ impl Plugin for Core {
                 .set(ImagePlugin::default_nearest()),
         );
 
-        app.add_plugins((StatesPlugin, SystemSetsPlugin, ModulePlugin));
+        app.add_plugins(EntropyPlugin::<WyRand>::default());
+
+        app.add_plugins((StatesPlugin, SystemSetsPlugin, ModulePlugin, ui::UiPlugin));
     }
 }

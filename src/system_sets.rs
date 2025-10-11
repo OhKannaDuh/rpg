@@ -18,5 +18,10 @@ impl GameModule for SystemSetsPlugin {
             Update,
             (GameStatePlayingSet.run_if(in_state(GameState::Playing)),),
         );
+
+        app.configure_sets(
+            FixedUpdate,
+            (GameStatePlayingSet.run_if(in_state(GameState::Playing)),),
+        );
     }
 }
