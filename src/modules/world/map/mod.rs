@@ -27,7 +27,8 @@ impl GameModule for MapPlugin {
             .init_resource::<ChunkPositionMap>()
             .init_resource::<ChunkManager>()
             .init_resource::<WorldIdentityMap>()
-            .init_resource::<WorldBounds>();
+            .init_resource::<WorldBounds>()
+            .init_resource::<GlobalWaterAnimation>();
     }
 
     fn messages(&self, app: &mut App) {
@@ -66,6 +67,7 @@ impl GameModule for MapPlugin {
             manage_chunks_around_player,
             process_chunk_queues,
             update_world_bounds_on_player_world_id_change,
+            animate_water_tiles,
         ));
     }
 }

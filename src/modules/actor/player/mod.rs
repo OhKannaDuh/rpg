@@ -85,26 +85,26 @@ fn spawn_player(
     let p2 = center + Vec2::new(sqrt3_over_2 * r, -0.5 * r);
     let p3 = center + Vec2::new(-sqrt3_over_2 * r, -0.5 * r);
 
-    spawn_creature.write(SpawnCreatureMessage {
-        name: "Steve".into(),
-        position: p1,
-        owner: Some(player),
-        spawn_radius: Some(128.0),
-    });
+    // spawn_creature.write(SpawnCreatureMessage {
+    //     name: "Steve".into(),
+    //     position: p1,
+    //     owner: Some(player),
+    //     spawn_radius: Some(128.0),
+    // });
 
-    spawn_creature.write(SpawnCreatureMessage {
-        name: "Anabelle".into(),
-        position: p2,
-        owner: Some(player),
-        spawn_radius: Some(128.0),
-    });
+    // spawn_creature.write(SpawnCreatureMessage {
+    //     name: "Anabelle".into(),
+    //     position: p2,
+    //     owner: Some(player),
+    //     spawn_radius: Some(128.0),
+    // });
 
-    spawn_creature.write(SpawnCreatureMessage {
-        name: "Jorge".into(),
-        position: p3,
-        owner: Some(player),
-        spawn_radius: Some(128.0),
-    });
+    // spawn_creature.write(SpawnCreatureMessage {
+    //     name: "Jorge".into(),
+    //     position: p3,
+    //     owner: Some(player),
+    //     spawn_radius: Some(128.0),
+    // });
 }
 
 fn handle_input(

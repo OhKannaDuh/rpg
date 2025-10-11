@@ -1,7 +1,10 @@
 module!(resources, components, events, assets);
 
+use bevy::render::render_resource::encase::private::Length;
+
 use crate::modules::actor::player::*;
 use crate::modules::actor::*;
+use crate::modules::world::map::tileset_def;
 
 prelude!();
 
@@ -49,6 +52,7 @@ pub fn process_chunk_queues(
     world_root_query: Single<Entity, With<WorldRoot>>,
     chunk_data: Res<ChunkDataCollection>,
     tilesets: Res<Tilesets>,
+    tileset_defs: Res<TilesetDefs>,
     layer_defs: Res<LayerDefs>,
     mut chunk_manager: ResMut<ChunkManager>,
     mut chunk_loaded: MessageWriter<ChunkLoaded>,
@@ -82,6 +86,10 @@ pub fn process_chunk_queues(
                 return;
             };
 
+            let Some(tileset_def) = tileset_defs.0.get(&layer.tileset_def_uid) else {
+                return;
+            };
+
             let layer_entity = commands.spawn(ChildOf(chunk_entity)).id();
 
             let tilemap_size = TilemapSize {
@@ -97,16 +105,36 @@ pub fn process_chunk_queues(
                     y: tilemap_size.y - 1 - (tile.px[1] / TILE_SIZE_I64) as u32,
                 };
 
-                let tile_entity = commands
-                    .spawn(TileBundle {
-                        position: pos,
-                        tilemap_id: TilemapId(layer_entity),
-                        texture_index: TileTextureIndex(tile.t as u32),
-                        ..Default::default()
-                    })
-                    .id();
+                let mut tile_entity = commands.spawn(TileBundle {
+                    position: pos,
+                    tilemap_id: TilemapId(layer_entity),
+                    texture_index: TileTextureIndex(tile.t as u32),
+                    ..Default::default()
+                });
 
-                storage.set(&pos, tile_entity);
+                let data = &tileset_def.custom_data(tile.t);
+                if data.starts_with("WaterAnimation") {
+                    info!("Animated water tile found: {}", data);
+
+                    let stride_str = data
+                        .split("Stride = ")
+                        .nth(1)
+                        .and_then(|s| s.split(')').next())
+                        .unwrap_or("0");
+
+                    info!("Parsed stride string: '{}'", stride_str);
+
+                    let stride: i64 = stride_str.parse().unwrap_or(0);
+
+                    info!("Parsed stride value: {}", stride);
+
+                    tile_entity.insert(WaterTile {
+                        base_texture_index: tile.t as u32,
+                        stride,
+                    });
+                }
+
+                storage.set(&pos, tile_entity.id());
             });
 
             let tile_size = TilemapTileSize {

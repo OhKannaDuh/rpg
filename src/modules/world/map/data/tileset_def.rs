@@ -4,6 +4,7 @@ use super::tile_flags::TileFlags;
 #[derive(Debug, Clone)]
 pub struct TilesetDef {
     flags_by_tile: Vec<TileFlags>,
+    custom_data_by_tile: Vec<String>,
 }
 
 impl TilesetDef {
@@ -23,7 +24,17 @@ impl TilesetDef {
             }
         }
 
-        TilesetDef { flags_by_tile }
+        let mut custom_data_by_tile =
+            vec![String::new(); (instance.c_hei * instance.c_wid) as usize];
+
+        for data in &instance.custom_data {
+            custom_data_by_tile[data.tile_id as usize] = data.data.clone();
+        }
+
+        TilesetDef {
+            flags_by_tile,
+            custom_data_by_tile,
+        }
     }
 
     pub fn flags(&self, tile_id: i64) -> TileFlags {
@@ -31,5 +42,12 @@ impl TilesetDef {
             .get(tile_id as usize)
             .copied()
             .unwrap_or_else(TileFlags::empty)
+    }
+
+    pub fn custom_data(&self, tile_id: i64) -> String {
+        self.custom_data_by_tile
+            .get(tile_id as usize)
+            .cloned()
+            .unwrap_or_default()
     }
 }

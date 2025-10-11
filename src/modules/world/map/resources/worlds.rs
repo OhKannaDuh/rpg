@@ -30,3 +30,36 @@ pub struct WorldBounds {
     pub height: f32,
     pub center: Vec2,
 }
+
+#[derive(Resource, Clone, Default, Debug)]
+pub struct GlobalWaterAnimation {
+    pub frame_time: f32,
+    pub frame: usize,
+    pub forward: bool,
+}
+
+impl GlobalWaterAnimation {
+    const FRAME_TIME: f32 = 0.5;
+    const FRAME_COUNT: usize = 3;
+
+    pub fn update(&mut self, delta: f32) {
+        self.frame_time += delta;
+        if self.frame_time >= Self::FRAME_TIME {
+            self.frame_time -= Self::FRAME_TIME;
+
+            if self.forward {
+                if self.frame + 1 >= Self::FRAME_COUNT {
+                    self.forward = false;
+                    self.frame = Self::FRAME_COUNT - 2;
+                } else {
+                    self.frame += 1;
+                }
+            } else if self.frame == 0 {
+                self.forward = true;
+                self.frame = 1;
+            } else {
+                self.frame -= 1;
+            }
+        }
+    }
+}
