@@ -23,6 +23,11 @@ bevy_rapier2d = { git = "https://github.com/lukasfri/bevy_rapier.git", branch = 
 seldom_state = { path = "external/seldom_state" }
 serde = "1.0.228"
 anyhow = "1.0.100"
+landmass = { version = "0.9.0", features = ["debug-avoidance"] }
+bevy_landmass = { version = "0.10.0", features = ["debug-avoidance"] }
+bevy_rand = "0.12.0"
+bevy_prng = { version = "0.12.0", features = ["wyrand"] }
+bevy-trait-query = "0.17.1"
 
 
 [lints.clippy]

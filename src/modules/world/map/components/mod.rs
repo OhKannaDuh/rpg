@@ -1,4 +1,5 @@
 prelude!();
+public!(ldtk_tiles);
 
 #[derive(Component, Clone, Debug, PartialEq, Eq, Hash, Reflect, PartialOrd, Ord)]
 #[reflect(Component)]
@@ -10,10 +11,9 @@ pub struct WorldRoot;
 #[require(Transform, GlobalTransform, Visibility, InheritedVisibility)]
 pub struct ChunkRoot;
 
-#[derive(Component, Clone, Debug, PartialEq, Eq, Hash, Reflect, PartialOrd, Ord)]
+#[derive(Component, Clone, Debug, PartialEq, Reflect, PartialOrd)]
 #[reflect(Component)]
 #[require(Transform, GlobalTransform, Visibility, InheritedVisibility)]
-pub struct WaterTile {
-    pub base_texture_index: u32,
-    pub stride: i64,
+pub struct PointOfInterest {
+    pub observation_radius_squared: f32,
 }

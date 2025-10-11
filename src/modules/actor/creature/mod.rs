@@ -1,14 +1,11 @@
 prelude!();
-private!(data);
+public!(components, data, systems, creatures);
 
-use std::u32::MAX;
+use bevy_trait_query::RegisterExt;
 
-use bevy::state;
-
-use crate::modules::{
-    actor::{player::Player, *},
-    dev::StateDebug,
-};
+use crate::modules::actor::animation::*;
+use crate::modules::actor::*;
+use crate::modules::world::pathfinding::*;
 
 pub struct CreaturePlugin;
 game_module_build!(CreaturePlugin);
@@ -22,23 +19,35 @@ impl GameModule for CreaturePlugin {
         app.add_message::<SpawnCreatureMessage>();
     }
 
+    fn types(&self, app: &mut App) {
+        app.register_component_as::<dyn SocialDrainer, CreatureNeeds>();
+        app.register_component_as::<dyn SocialRestorer, IsSocialising>();
+
+        app.register_component_as::<dyn ExplorationDrainer, CreatureNeeds>();
+        app.register_component_as::<dyn ExplorationRestorer, IsExploring>();
+    }
+
     fn systems(&self, app: &mut App) {
-        app.on_playing_game_update((
-            CreatureStateRoamingAroundOwner::process,
-            CreatureStateCatchingUpToOwner::process,
-        ));
+        app.on_playing_game_update(CreatureStateExploration::systems());
+
+        app.on_playing_game_update(handle_spawn_creature_messages);
 
         app.on_playing_game_update((
-            spawn_creature,
-            update_creature_debug_resolver,
-            CreatureStateRoamingAroundOwner::render_path_gizmos,
+            update_creature_animation_controllers,
+            advance_animators::<CreatureAnimationState>,
         ));
     }
 }
 
 #[derive(Component, Reflect, Debug, Default)]
 #[reflect(Component)]
-#[require(Actor)]
+#[require(
+    Actor,
+    CreatureBehaviour,
+    CreatureNeeds,
+    CreatureStats,
+    CreatureRelationships
+)]
 pub struct Creature;
 
 #[derive(Component, Reflect, Debug)]
@@ -50,17 +59,25 @@ pub struct OwnedBy(pub Entity);
 pub struct SpawnCreatureMessage {
     pub name: String,
     pub position: Vec2,
+
+    pub color: Color,
+
     pub owner: Option<Entity>,
     pub spawn_radius: Option<f32>,
+    pub behaviour_preset: Option<CreatureBehaviourPresetType>,
 }
 
-fn spawn_creature(mut commands: Commands, mut messages: MessageReader<SpawnCreatureMessage>) {
-    const WANDER_DISTANCE_MAX: f32 = (TILE_SIZE * 8.0) * (TILE_SIZE * 8.0);
-    const WANDER_DISTANCE_MIN: f32 = (TILE_SIZE * 3.0) * (TILE_SIZE * 3.0);
-    const CATCHUP_START_DISTANCE: f32 =
-        ((TILE_SIZE * 8.0) + TILE_SIZE) * ((TILE_SIZE * 8.0) + TILE_SIZE);
+fn handle_spawn_creature_messages(
+    mut commands: Commands,
+    mut messages: MessageReader<SpawnCreatureMessage>,
+    mut rng: Single<&mut WyRand, With<GlobalRng>>,
+    archipelago_id: Res<ArchipelagoId>,
 
-    const CATCHUP_STOP_DISTANCE: f32 = (TILE_SIZE * 2.0) * (TILE_SIZE * 2.0);
+    assets: Res<ActorAssets>,
+) {
+    let Some(archipelago_id) = archipelago_id.0 else {
+        return;
+    };
 
     for message in messages.read() {
         info!("Spawning creature {}", message.name);
@@ -73,116 +90,96 @@ fn spawn_creature(mut commands: Commands, mut messages: MessageReader<SpawnCreat
             position += Vec2::new(angle.cos() * offset, angle.sin() * offset);
         }
 
-        let creature = commands
-            .spawn((
-                Name::new(message.name.clone()),
-                Creature,
-                Transform::from_xyz(position.x, position.y, 0.0),
-                Sprite {
-                    color: Color::srgb(1.0, 0.0, 0.0),
-                    custom_size: Some(Vec2::splat(TILE_SIZE)),
-                    ..Default::default()
+        let mut creature = commands.spawn((
+            Name::new(message.name.clone()),
+            Creature,
+            Transform::from_xyz(position.x, position.y, 0.0),
+            rng.fork_seed(),
+            get_state_machine(),
+        ));
+
+        creature.insert((
+            Sprite {
+                image: assets.images["textures/entities/slime.png"].clone(),
+                texture_atlas: Some(TextureAtlas {
+                    layout: assets.slime_layout.clone(),
+                    index: 0,
+                }),
+                custom_size: Some(Vec2::splat(TILE_SIZE)),
+                ..Default::default()
+            },
+            FaceDirection::default(),
+            CreatureAnimationController,
+            Animator::<CreatureAnimationState>::new(CreatureAnimationState::IdleDown),
+            AnimationBank::<CreatureAnimationState> {
+                clips: HashMap::from_iter(vec![
+                    AnimationBank::idle_entry(CreatureAnimationState::IdleDown, 0),
+                    AnimationBank::idle_entry(CreatureAnimationState::IdleUp, 3),
+                    AnimationBank::idle_entry(CreatureAnimationState::IdleRight, 6),
+                    AnimationBank::idle_entry(CreatureAnimationState::IdleLeft, 9),
+                    AnimationBank::linear_entry(CreatureAnimationState::MoveDown, 0, 3, 0.15),
+                    AnimationBank::linear_entry(CreatureAnimationState::MoveUp, 3, 3, 0.15),
+                    AnimationBank::linear_entry(CreatureAnimationState::MoveRight, 6, 3, 0.15),
+                    AnimationBank::linear_entry(CreatureAnimationState::MoveLeft, 9, 3, 0.15),
+                ]),
+            },
+            FootPosition(-TILE_SIZE / 2.0),
+        ));
+
+        creature.insert((
+            ENTITY_COLLISION,
+            RigidBody::KinematicPositionBased,
+            Collider::ball(DEFAULT_ACTOR_COLLIDER_RADIUS),
+            Restitution::coefficient(DEFAULT_ACTOR_RESTITUTION),
+            KinematicCharacterController {
+                apply_impulse_to_dynamic_bodies: false,
+                filter_groups: Some(ENTITY_COLLISION),
+                ..Default::default()
+            },
+        ));
+
+        creature.insert((
+            Agent2dBundle {
+                agent: Default::default(),
+                settings: AgentSettings {
+                    radius: DEFAULT_ACTOR_COLLIDER_RADIUS,
+                    desired_speed: DEFAULT_ACTOR_SPEED,
+                    max_speed: DEFAULT_ACTOR_SPEED * 1.5,
                 },
-                CreatureDebugResolver,
-                // State
-                CreatureStateIdle,
-                StateMachine::default()
-                    // If we are idle and within range of owner, start roaming around owner
-                    .trans::<CreatureStateIdle, _>(
-                        CreatureStateHelpers::within_distance_to_owner(WANDER_DISTANCE_MAX),
-                        CreatureStateRoamingAroundOwner {
-                            min_wander_distance: ops::sqrt(WANDER_DISTANCE_MIN),
-                            max_wander_distance: ops::sqrt(WANDER_DISTANCE_MAX) - 1.0,
-                            ..Default::default()
-                        },
-                    )
-                    // If we every get too far from our owner, catch up to them
-                    .trans::<NotState<CreatureStateCatchingUpToOwner>, _>(
-                        CreatureStateHelpers::outside_distance_to_owner(CATCHUP_START_DISTANCE),
-                        CreatureStateCatchingUpToOwner,
-                    )
-                    // If we have caught up to our owner, return to idle
-                    .trans::<CreatureStateCatchingUpToOwner, _>(
-                        CreatureStateHelpers::within_distance_to_owner(CATCHUP_STOP_DISTANCE),
-                        CreatureStateIdle,
-                    )
-                    .set_trans_logging(true),
-                // Physics
-                ENTITY_COLLISION,
-                RigidBody::KinematicPositionBased,
-                Collider::ball(DEFAULT_ACTOR_COLLIDER_RADIUS),
-                Restitution::coefficient(DEFAULT_ACTOR_RESTITUTION),
-                KinematicCharacterController {
-                    apply_impulse_to_dynamic_bodies: false,
-                    filter_groups: Some(ENTITY_COLLISION),
-                    ..Default::default()
-                },
-            ))
-            .id();
+                archipelago_ref: ArchipelagoRef2d::new(archipelago_id),
+            },
+            AgentTracker::default(),
+        ));
 
         if let Some(owner) = message.owner {
-            commands.entity(creature).insert(OwnedBy(owner));
+            creature.insert(OwnedBy(owner));
+        }
+
+        if let Some(roam_behaviour) = message.behaviour_preset {
+            creature.insert(roam_behaviour.get_behaviour());
         }
     }
 }
 
-#[derive(Component, Reflect, Debug, Default)]
-#[reflect(Component)]
-#[require(ActorDebug)]
-pub struct CreatureDebugResolver;
+fn get_state_machine() -> impl Bundle {
+    let builders: Vec<Box<dyn StateMachineBuilder + Send + Sync>> = vec![
+        Box::new(|sm: StateMachine| {
+            // Clear agent data when we transition to any state
+            sm.on_enter::<AnyState>(|entity| {
+                entity.insert((AgentTarget2d::None, AgentDesiredVelocity2d::default()));
+            })
+            .set_trans_logging(true)
+        }),
+        Box::new(CreatureStateIdle),
+        Box::new(CreatureStateRoamingAroundOwnerIdle::default()),
+        Box::new(CreatureStateRoamingAroundOwnerRoaming::default()),
+        Box::new(CreatureStateCatchingUpToOwner),
+        Box::new(CreatureStateInvestigatingPointOfInterestMoving::default()),
+        Box::new(CreatureStateInvestigatingPointOfInterestInvestigating::default()),
+    ];
 
-fn update_creature_debug_resolver(
-    mut child_query: Query<(&ChildOf, &mut ActorDebugRoot)>,
-    parent_query: Query<
-        (
-            &Transform,
-            &Name,
-            Option<&OwnedBy>,
-            Option<&CreatureStateIdle>,
-            Option<&CreatureStateRoamingAroundOwner>,
-            Option<&CreatureStateCatchingUpToOwner>,
-        ),
-        With<CreatureDebugResolver>,
-    >,
-    owner_query: Query<&Transform>,
-) {
-    for (child, mut debug) in child_query.iter_mut() {
-        let Ok((transform, name, owned_by_opt, idle_opt, roam_opt, catch_opt)) =
-            parent_query.get(child.parent())
-        else {
-            continue;
-        };
-
-        debug.0.clear();
-
-        debug.0.write_fmt(format_args!("Name: {}\n", name)).ok();
-
-        let position = transform.translation.truncate();
-
-        if let Some(owner) = owned_by_opt {
-            debug.0.write_fmt(format_args!("Owner: {}\n", owner.0)).ok();
-
-            if let Ok(owner_transform) = owner_query.get(owner.0) {
-                let distance = position.distance(owner_transform.translation.truncate());
-
-                debug
-                    .0
-                    .write_fmt(format_args!("Distance to Owner: {:.2}\n", distance))
-                    .ok();
-            }
-        }
-
-        fn push_state<TState>(opt: Option<&TState>, buf: &mut String)
-        where
-            TState: StateDebug,
-        {
-            if let Some(s) = opt {
-                buf.write_fmt(format_args!("{}\n", s.debug())).ok();
-            }
-        }
-
-        push_state(idle_opt, &mut debug.0);
-        push_state(roam_opt, &mut debug.0);
-        push_state(catch_opt, &mut debug.0);
-    }
+    (
+        CreatureStateIdle,
+        StateMachineFactory::from_many(builders).build(StateMachine::default()),
+    )
 }

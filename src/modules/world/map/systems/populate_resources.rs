@@ -1,3 +1,5 @@
+use crate::modules::world::map::WaterTile;
+
 prelude!();
 module!(assets, resources, data);
 
@@ -99,4 +101,10 @@ pub fn populate_world_identity_map(
     for world in &map.project.worlds {
         world_identity_map.insert(WorldId(world.iid.clone()), world.identifier.clone());
     }
+}
+
+pub fn populate_ldtk_component_registry(mut registry: ResMut<LdtkComponentRegistry>) {
+    info!("Populating LDtk component registry...");
+
+    registry.register::<WaterTile>();
 }

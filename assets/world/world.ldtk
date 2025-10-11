@@ -439,19 +439,19 @@
 				]
 			}, { "enumValueId": "DEEP_WATER", "tileIds": [71,88,89,90,91,92,93,94,95,108,109,110,111,112,126,127,128,129,130,144,145,146,147,148,162,163,164,165] }, { "enumValueId": "COLLIDE_NORTH", "tileIds": [181,183,184,186,188,189,235,237,238,240,242,243,289,291,292,294,296,297,343,345,346,348,350,351,397,399,400,402,404,405] } ],
 			"customData": [
-				{ "tileId": 293, "data": "WaterAnimation(Stride = 54)" },
-				{ "tileId": 294, "data": "WaterAnimation(Stride = 54)" },
-				{ "tileId": 295, "data": "WaterAnimation(Stride = 54)" },
-				{ "tileId": 296, "data": "WaterAnimation(Stride = 54)" },
-				{ "tileId": 297, "data": "WaterAnimation(Stride = 54)" },
-				{ "tileId": 311, "data": "WaterAnimation(Stride = 54)" },
-				{ "tileId": 312, "data": "WaterAnimation(Stride = 54)" },
-				{ "tileId": 313, "data": "WaterAnimation(Stride = 54)" },
-				{ "tileId": 314, "data": "WaterAnimation(Stride = 54)" },
-				{ "tileId": 315, "data": "WaterAnimation(Stride = 54)" },
-				{ "tileId": 329, "data": "WaterAnimation(Stride = 54)" },
-				{ "tileId": 330, "data": "WaterAnimation(Stride = 54)" },
-				{ "tileId": 331, "data": "WaterAnimation(Stride = 54)" }
+				{ "tileId": 293, "data": "WaterTile(stride = 54)" },
+				{ "tileId": 294, "data": "WaterTile(stride = 54)" },
+				{ "tileId": 295, "data": "WaterTile(stride = 54)" },
+				{ "tileId": 296, "data": "WaterTile(stride = 54)" },
+				{ "tileId": 297, "data": "WaterTile(stride = 54)" },
+				{ "tileId": 311, "data": "WaterTile(stride = 54)" },
+				{ "tileId": 312, "data": "WaterTile(stride = 54)" },
+				{ "tileId": 313, "data": "WaterTile(stride = 54)" },
+				{ "tileId": 314, "data": "WaterTile(stride = 54)" },
+				{ "tileId": 315, "data": "WaterTile(stride = 54)" },
+				{ "tileId": 329, "data": "WaterTile(stride = 54)" },
+				{ "tileId": 330, "data": "WaterTile(stride = 54)" },
+				{ "tileId": 331, "data": "WaterTile(stride = 54)" }
 			],
 			"savedSelections": [],
 			"cachedPixelData": {

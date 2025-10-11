@@ -1,5 +1,7 @@
 prelude!();
+
 use super::tile_flags::TileFlags;
+use crate::modules::world::map::{FromLdtkTile, LdtkComponentRegistry};
 
 #[derive(Debug, Clone)]
 pub struct TilesetDef {
@@ -44,10 +46,51 @@ impl TilesetDef {
             .unwrap_or_else(TileFlags::empty)
     }
 
-    pub fn custom_data(&self, tile_id: i64) -> String {
+    fn custom_data(&self, tile_id: i64) -> String {
         self.custom_data_by_tile
             .get(tile_id as usize)
             .cloned()
             .unwrap_or_default()
+    }
+
+    fn parse_custom_data(s: &str) -> Option<(String, HashMap<String, String>)> {
+        let s = s.trim();
+        let (name, rest) = s.split_once('(')?;
+        let name = name.trim().to_string();
+        let rest = rest.strip_suffix(')')?.trim();
+
+        let mut kv = HashMap::new();
+        for pair in rest.split(',') {
+            let pair = pair.trim();
+            if pair.is_empty() {
+                continue;
+            }
+            let (k, v) = pair.split_once('=')?;
+            kv.insert(k.trim().to_string(), v.trim().trim_matches('"').to_string());
+        }
+        Some((name, kv))
+    }
+
+    fn parse_custom_data_iter(
+        s: &str,
+    ) -> impl Iterator<Item = (String, HashMap<String, String>)> + '_ {
+        s.split(';')
+            .map(str::trim)
+            .filter(|seg| !seg.is_empty())
+            .filter_map(TilesetDef::parse_custom_data)
+    }
+
+    pub fn create_components<'a>(
+        &'a self,
+        tile: &'a TileInstance,
+        registry: &'a LdtkComponentRegistry,
+    ) -> impl Iterator<Item = Box<dyn Reflect>> + 'a {
+        let data = self.custom_data(tile.t);
+
+        let components: Vec<Box<dyn Reflect>> = TilesetDef::parse_custom_data_iter(&data)
+            .filter_map(|(name, kv)| registry.create(&name, tile, &kv))
+            .collect();
+
+        components.into_iter()
     }
 }

@@ -87,19 +87,25 @@ impl Lodestone {
                     custom_size: Some(source.size()),
                     ..Default::default()
                 },
-                ActorAnimator::static_animation(ActorAnimation {
-                    frames: vec![
-                        AnimationFrameMeta::new(0, 0.10),
-                        AnimationFrameMeta::new(1, 0.11),
-                        AnimationFrameMeta::new(2, 0.14),
-                        AnimationFrameMeta::new(3, 0.22),
-                        AnimationFrameMeta::new(4, 0.17),
-                        AnimationFrameMeta::new(5, 0.14),
-                        AnimationFrameMeta::new(6, 0.13),
-                        AnimationFrameMeta::new(7, 0.17),
-                    ],
-                    frame: 0,
-                }),
+                Animator::<String>::new("default".to_string()),
+                AnimationBank::<String> {
+                    clips: HashMap::from_iter(vec![(
+                        "default".to_string(),
+                        ActorAnimation {
+                            frames: vec![
+                                AnimationFrameMeta::new(0, 0.10),
+                                AnimationFrameMeta::new(1, 0.11),
+                                AnimationFrameMeta::new(2, 0.14),
+                                AnimationFrameMeta::new(3, 0.22),
+                                AnimationFrameMeta::new(4, 0.17),
+                                AnimationFrameMeta::new(5, 0.14),
+                                AnimationFrameMeta::new(6, 0.13),
+                                AnimationFrameMeta::new(7, 0.17),
+                            ],
+                            frame: 0,
+                        },
+                    )]),
+                },
             ))
             .id();
 

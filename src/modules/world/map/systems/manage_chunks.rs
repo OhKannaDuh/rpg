@@ -1,10 +1,8 @@
 module!(resources, components, events, assets);
 
-use bevy::render::render_resource::encase::private::Length;
-
 use crate::modules::actor::player::*;
 use crate::modules::actor::*;
-use crate::modules::world::map::tileset_def;
+use bevy::ecs::reflect::ReflectCommandExt;
 
 prelude!();
 
@@ -54,6 +52,7 @@ pub fn process_chunk_queues(
     tilesets: Res<Tilesets>,
     tileset_defs: Res<TilesetDefs>,
     layer_defs: Res<LayerDefs>,
+    ldtk_component_registry: Res<LdtkComponentRegistry>,
     mut chunk_manager: ResMut<ChunkManager>,
     mut chunk_loaded: MessageWriter<ChunkLoaded>,
     mut commands: Commands,
@@ -112,20 +111,9 @@ pub fn process_chunk_queues(
                     ..Default::default()
                 });
 
-                let data = &tileset_def.custom_data(tile.t);
-                if data.starts_with("WaterAnimation") {
-                    let stride_str = data
-                        .split("Stride = ")
-                        .nth(1)
-                        .and_then(|s| s.split(')').next())
-                        .unwrap_or("0");
-
-                    let stride: i64 = stride_str.parse().unwrap_or(0);
-
-                    tile_entity.insert(WaterTile {
-                        base_texture_index: tile.t as u32,
-                        stride,
-                    });
+                for tile_component in tileset_def.create_components(tile, &ldtk_component_registry)
+                {
+                    tile_entity.insert_reflect(tile_component);
                 }
 
                 storage.set(&pos, tile_entity.id());

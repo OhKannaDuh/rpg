@@ -35,3 +35,7 @@ pub const ENTITY_COLLISION: CollisionGroups =
 
 pub const WORLD_COLLISION: CollisionGroups =
     CollisionGroups::new(WORLD_COLLISION_GROUP, ENTITY_COLLISION_GROUP);
+
+pub fn tile_size_squared(multi: f32) -> f32 {
+    (TILE_SIZE * multi) * (TILE_SIZE * multi)
+}

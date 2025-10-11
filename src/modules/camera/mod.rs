@@ -1,5 +1,8 @@
 prelude!();
-use bevy::{camera::ScalingMode, window::PrimaryWindow};
+use bevy::{
+    camera::{ScalingMode, visibility::RenderLayers},
+    window::PrimaryWindow,
+};
 
 use crate::modules::world::map::WorldBounds;
 
@@ -52,11 +55,10 @@ pub fn spawn_camera(mut commands: Commands) {
 }
 
 pub fn follow_foci(
-    mut camera: Single<(&mut Transform, &MainCamera, &Projection), Without<CameraFocus>>,
+    camera: Single<(&mut Transform, &MainCamera, &Projection), Without<CameraFocus>>,
     foci: Query<&Transform, With<CameraFocus>>,
     bounds: Res<WorldBounds>,
     time: Res<Time>,
-    window_q: Query<&Window, With<PrimaryWindow>>,
 ) {
     if foci.is_empty() {
         return;

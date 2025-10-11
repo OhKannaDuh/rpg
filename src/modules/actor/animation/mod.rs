@@ -1,4 +1,5 @@
 prelude!();
+public!(core, animator);
 
 use std::hash::Hash;
 
@@ -7,160 +8,57 @@ game_module_build!(AnimationPlugin);
 
 impl GameModule for AnimationPlugin {
     fn systems(&self, app: &mut App) {
-        app.on_playing_game_update((animate_actors,));
+        app.on_playing_game_update((advance_animators::<String>,));
     }
 }
 
-fn animate_actors(time: Res<Time>, mut query: Query<(&mut ActorAnimator, &mut Sprite)>) {
+pub fn advance_animators<Key: Eq + Hash + Clone + Send + Sync + 'static>(
+    mut query: Query<(&mut Animator<Key>, &mut AnimationBank<Key>, &mut Sprite)>,
+    time: Res<Time>,
+) {
     let delta = time.delta_secs();
 
-    for (mut animator, mut sprite) in query.iter_mut() {
-        let next = animator.controller.get_current_state();
-
-        animator.elapsed += delta;
-
-        if next != animator.current {
-            animator.reset_current();
-            animator.current = next;
-
-            if let Some(atlas) = &mut sprite.texture_atlas {
-                atlas.index = 0;
-            }
+    for (mut animator, mut bank, mut sprite) in &mut query {
+        if animator.target != animator.current {
+            animator.current = animator.target.clone();
+            animator.reset_current(&mut bank);
         }
 
-        let current_key = animator.current.clone();
-        let (frame_duration, maybe_len) = match animator.animation.get(&current_key) {
-            Some(anim) => {
-                if anim.frames.is_empty() {
-                    continue;
-                }
-                let frame = &anim.frames[anim.frame];
-                (frame.duration, Some(anim.frames.len()))
-            }
-            None => continue,
+        let Some(clip) = bank.clips.get_mut(&animator.current) else {
+            continue;
         };
 
-        if animator.elapsed >= frame_duration {
-            animator.elapsed -= frame_duration;
+        if clip.frames.is_empty() {
+            continue;
+        }
 
-            if let Some(anim) = animator.animation.get_mut(&current_key) {
-                let len = match maybe_len {
-                    Some(x) => x,
-                    None => anim.frames.len(),
-                };
-                if len == 0 {
-                    continue;
-                }
+        if clip.frames[clip.frame].duration <= 0.0 {
+            if let Some(atlas) = &mut sprite.texture_atlas {
+                atlas.index = clip.frames[clip.frame].atlas_index;
+            }
 
-                anim.frame = (anim.frame + 1) % len;
+            continue;
+        }
 
-                if let Some(atlas) = &mut sprite.texture_atlas {
-                    atlas.index = anim.frames[anim.frame].atlas_index;
+        animator.elapsed += delta * animator.speed;
+
+        while clip.frames[clip.frame].duration > 0.0
+            && animator.elapsed >= clip.frames[clip.frame].duration
+        {
+            animator.elapsed -= clip.frames[clip.frame].duration;
+            clip.frame += 1;
+            if clip.frame >= clip.frames.len() {
+                if animator.looping {
+                    clip.frame = 0;
+                } else {
+                    clip.frame = clip.frames.len() - 1;
+                    break;
                 }
             }
         }
-    }
-}
 
-pub trait ActorAnimationController<Key>: Send + Sync
-where
-    Key: Eq + Hash + Clone + Send + Sync + 'static,
-{
-    fn get_current_state(&self) -> Key;
-}
-
-pub struct StaticAnimationController {
-    state: String,
-}
-
-impl StaticAnimationController {
-    pub fn new(state: String) -> Self {
-        Self { state }
-    }
-}
-
-impl ActorAnimationController<String> for StaticAnimationController {
-    fn get_current_state(&self) -> String {
-        self.state.clone()
-    }
-}
-
-#[derive(Component)]
-pub struct ActorAnimator<Key = String>
-where
-    Key: Eq + Hash + Clone + Send + Sync + 'static,
-{
-    pub current: Key,
-    pub elapsed: f32,
-    pub animation: HashMap<Key, ActorAnimation>,
-    pub controller: Box<dyn ActorAnimationController<Key>>,
-}
-
-impl ActorAnimator<String> {
-    pub fn static_animation(animation: ActorAnimation) -> Self {
-        Self {
-            current: "default".to_string(),
-            elapsed: 0.0,
-            animation: {
-                let mut map = HashMap::new();
-                map.insert("default".to_string(), animation);
-                map
-            },
-            controller: Box::new(StaticAnimationController::new("default".to_string())),
+        if let Some(atlas) = &mut sprite.texture_atlas {
+            atlas.index = clip.frames[clip.frame].atlas_index;
         }
-    }
-
-    pub fn reset_current(&mut self) {
-        if let Some(anim) = self.animation.get_mut(&self.current) {
-            anim.reset();
-        }
-
-        self.elapsed = 0.0;
-    }
-}
-
-pub struct ActorAnimation {
-    pub frame: usize,
-    pub frames: Vec<AnimationFrameMeta>,
-}
-
-impl ActorAnimation {
-    pub fn new(frames: Vec<AnimationFrameMeta>) -> Self {
-        Self { frame: 0, frames }
-    }
-
-    pub fn from_many_frames(atlas_index_start: usize, count: usize, duration: f32) -> Self {
-        Self {
-            frame: 0,
-            frames: AnimationFrameMeta::many(atlas_index_start, count, duration),
-        }
-    }
-
-    pub fn reset(&mut self) {
-        self.frame = 0;
-    }
-}
-
-#[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Reflect, Default)]
-pub struct AnimationFrameMeta {
-    pub atlas_index: usize,
-    pub duration: f32,
-}
-
-impl AnimationFrameMeta {
-    pub fn new(atlas_index: usize, duration: f32) -> Self {
-        Self {
-            atlas_index,
-            duration,
-        }
-    }
-
-    pub fn many(atlas_index_start: usize, count: usize, duration: f32) -> Vec<Self> {
-        (0..count)
-            .map(|i| AnimationFrameMeta {
-                atlas_index: atlas_index_start + i,
-                duration,
-            })
-            .collect()
     }
 }

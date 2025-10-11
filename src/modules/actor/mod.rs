@@ -1,7 +1,6 @@
 prelude!();
 public!(components, assets);
 plugins!(
-    (npc_ai, NpcAiPlugin),
     (player, PlayerPlugin),
     (actor_registry, ActorRegistryPlugin),
     (animation, AnimationPlugin),
@@ -23,7 +22,6 @@ impl GameModule for ActorPlugin {
 
     fn systems(&self, app: &mut App) {
         app.add_plugins((
-            NpcAiPlugin,
             PlayerPlugin,
             ActorRegistryPlugin,
             AnimationPlugin,

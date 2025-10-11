@@ -28,7 +28,12 @@ impl GameModule for MapPlugin {
             .init_resource::<ChunkManager>()
             .init_resource::<WorldIdentityMap>()
             .init_resource::<WorldBounds>()
-            .init_resource::<GlobalWaterAnimation>();
+            .init_resource::<GlobalWaterAnimation>()
+            .init_resource::<LdtkComponentRegistry>();
+    }
+
+    fn types(&self, app: &mut App) {
+        app.register_type::<WaterTile>();
     }
 
     fn messages(&self, app: &mut App) {
@@ -48,6 +53,8 @@ impl GameModule for MapPlugin {
                 populate_layer_defs,
                 populate_tilesets,
                 populate_world_identity_map,
+                populate_ldtk_component_registry,
+                spawn_world_root,
             )
                 .in_set(AppLoadingSystems::PopulateDefinitions),
         );
@@ -57,7 +64,6 @@ impl GameModule for MapPlugin {
             (
                 populate_chunk_position_map,
                 populate_chunk_data_collection,
-                spawn_world_root,
                 populate_global_map_entities,
             )
                 .in_set(AppLoadingSystems::PopulateChunkData),

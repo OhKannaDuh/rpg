@@ -1,2 +1,2 @@
 prelude!();
-public!(states);
+public!(states, relationships, stats, needs);

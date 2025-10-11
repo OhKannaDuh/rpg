@@ -1,5 +1,6 @@
 prelude!();
 
+use bevy::ecs::query;
 use bevy::remote::RemotePlugin;
 use bevy::remote::http::RemoteHttpPlugin;
 
@@ -18,7 +19,13 @@ impl GameModule for DevPlugin {
         // app.add_plugins(RapierDebugRenderPlugin::default());
     }
 
-    fn systems(&self, app: &mut App) {}
+    fn systems(&self, app: &mut App) {
+        app.on_playing_game_update((
+            // render_global_entities_for_player,
+            draw_agent_radius,
+            draw_character_radius,
+        ));
+    }
 }
 
 fn render_global_entities_for_player(
@@ -50,4 +57,26 @@ fn render_global_entities_for_player(
 
 pub trait StateDebug {
     fn debug(&self) -> String;
+}
+
+fn draw_agent_radius(query: Query<(&Transform, &AgentSettings)>, mut gizmos: Gizmos) {
+    for (transform, settings) in query.iter() {
+        let radius = settings.radius;
+        gizmos.circle_2d(
+            Isometry2d::from_translation(transform.translation.truncate()),
+            radius,
+            Color::srgb(0.0, 0.7, 0.55),
+        );
+    }
+}
+
+fn draw_character_radius(query: Query<(&Transform, &CharacterSettings)>, mut gizmos: Gizmos) {
+    for (transform, settings) in query.iter() {
+        let radius = settings.radius;
+        gizmos.circle_2d(
+            Isometry2d::from_translation(transform.translation.truncate()),
+            radius,
+            Color::srgb(1.0, 0.5, 0.5),
+        );
+    }
 }

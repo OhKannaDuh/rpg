@@ -15,15 +15,13 @@ pub fn animate_water_tiles(
     }
 
     for (mut texture_index, water_tile) in query.iter_mut() {
-        let base = water_tile.base_texture_index as i64;
+        let base = water_tile.base_texture_index;
         let next = base + (animation.frame as i64 * water_tile.stride);
         let current = texture_index.0 as i64;
 
         if current == next {
             continue;
         }
-
-        info!("Updating water tile from {} to {}", current, next);
 
         texture_index.0 = next as u32;
     }
